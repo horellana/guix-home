@@ -1,4 +1,6 @@
 (use-modules
+ (srfi srfi-1)
+
  (gnu home)
  (guix channels)         
 
@@ -9,9 +11,7 @@
  (gnu home services gnupg)
  (gnu home services shells)
  (gnu home services desktop)
-
- (srfi srfi-1)
- 
+  
  (gnu packages emacs)
  (gnu packages emacs-xyz)
  (gnu packages gnuzilla)
