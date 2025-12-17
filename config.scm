@@ -133,8 +133,7 @@
   (append (list
 	   unzip
 	   firefox
-	   mesa ;; HW video decode?
-	   ;; firefox-pinned
+	   mesa 
 	   vim
 	   tmux
 	   htop
