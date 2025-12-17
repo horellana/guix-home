@@ -4,8 +4,10 @@
 
  (gnu services)
  (gnu home services)
+ (gnu home services ssh)
  (gnu home services guix)
  (gnu home services gnupg)
+ (gnu home services shells)
  (gnu home services desktop)
 
  (srfi srfi-1)
@@ -23,6 +25,7 @@
  (gnu packages compression)
  (gnu packages curl)
  (gnu packages version-control)
+ (gnu packages ssh)
  (guix gexp)
  (guix inferior)
  
@@ -47,15 +50,15 @@
 (define nonguix-pinned-channel
   (append
    (list (channel
-          (name 'nonguix)
-          (url "https://gitlab.com/nonguix/nonguix")
-          (commit "53c477b3e0a45b3bd0036647ac805a8f5e8f71d0")
-          ;; Fixes the warning: Authenticates the channel
-          (introduction
-           (make-channel-introduction
-            "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
-            (openpgp-fingerprint
-             "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5")))))
+	  (name 'nonguix)
+	  (url "https://gitlab.com/nonguix/nonguix")
+	  (commit "53c477b3e0a45b3bd0036647ac805a8f5e8f71d0")
+	  ;; Fixes the warning: Authenticates the channel
+	  (introduction
+	   (make-channel-introduction
+	    "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
+	    (openpgp-fingerprint
+	     "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5")))))
    ;; Fixes the error: Adds the required core 'guix' channel
    %default-channels))
 
@@ -153,7 +156,7 @@
 	   polkit-gnome
 	   font-awesome
 	   font-dejavu             
-           font-google-noto
+	   font-google-noto
 	   font-jetbrains-mono 
 	   font-google-noto              
 	   font-google-noto-emoji
@@ -167,35 +170,47 @@
 	   gnupg
 	   password-store
 	   pinentry-gnome3
-
+	   openssh
 	   git)
 	  my-emacs-packages))
 
  (services
   (append
    (list
+    (service home-bash-service-type
+	     (home-bash-configuration
+	      (guix-defaults? #t)
+	      (bashrc 
+	       (list 
+		(plain-file "gpg-agent-setup" 
+			    (string-append
+			     "export GPG_TTY=$(tty)\n"
+			     "gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1\n"))))))
+
     (service home-gpg-agent-service-type
 	     (home-gpg-agent-configuration
 	      (pinentry-program 
 	       (file-append pinentry-gnome3 "/bin/pinentry"))
 	      
-	      (default-cache-ttl 600)
+	      (default-cache-ttl 7200)
 	      (max-cache-ttl 7200)  
 	      
 	      (ssh-support? #t)
 	      
 	      (extra-content "no-grab\n")))
 
+    (service home-openssh-service-type
+	     (home-openssh-configuration))
 
     (simple-service 'guix-emacs-config
-                    home-files-service-type
-                    (list `(".emacs.d/guix-config.el" ,guix-emacs-config)))
+		    home-files-service-type
+		    (list `(".emacs.d/guix-config.el" ,guix-emacs-config)))
 
     (simple-service 'wayland-env-vars-service
 		    home-environment-variables-service-type
-                    `(("MOZ_ENABLE_WAYLAND" . "1")      
+		    `(("MOZ_ENABLE_WAYLAND" . "1")      
 		      ("XDG_CURRENT_DESKTOP" . "sway")  
-                      ("XDG_SESSION_TYPE" . "wayland")))
+		      ("XDG_SESSION_TYPE" . "wayland")))
 
     (simple-service 'dotfiles
 		    home-files-service-type
@@ -213,13 +228,13 @@
 		     `(".config/gtk-4.0/settings.ini" ,(local-file "gtk/gtk4.ini"))))
     
     (service home-channels-service-type
-             (append
-              (list (channel
-                     (name 'nonguix)
-                     (url "https://gitlab.com/nonguix/nonguix")
-                     (introduction
-                      (make-channel-introduction
-                       "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
-                       (openpgp-fingerprint
+	     (append
+	      (list (channel
+		     (name 'nonguix)
+		     (url "https://gitlab.com/nonguix/nonguix")
+		     (introduction
+		      (make-channel-introduction
+		       "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
+		       (openpgp-fingerprint
 			"2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5")))))
 	      %default-channels))))))
