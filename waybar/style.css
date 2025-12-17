@@ -1,0 +1,103 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrains Mono", "FontAwesome", "DejaVu Sans", "Font Awesome 6 Free", sans-serif;
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: #000000;
+    color: #ffffff;
+}
+
+/* --- WORKSPACES --- */
+
+#workspaces button {
+    padding: 0 10px;
+    background: transparent;
+    color: #888888;
+}
+
+#workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+    background: #1a1a1a;
+    color: #ffffff;
+}
+
+#workspaces button.focused {
+    background: #ffffff;
+    color: #000000;
+}
+
+#workspaces button.urgent {
+    background-color: #333333;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* --- CENTER WINDOW TITLE --- */
+#window {
+    color: #cccccc;
+    font-weight: bold;
+}
+
+/* --- RIGHT MODULES --- */
+
+#clock, #battery, #backlight, #cpu, #custom-gpu, #memory, #disk, #custom-weather, #network, #pulseaudio, #mic, #tray, #mode {
+    padding: 0 10px;
+    margin: 0 0;
+    color: #ffffff;
+    background-color: #000000;
+}
+
+#clock {
+    font-weight: bold;
+}
+
+#tray {
+    margin-right: 5px;
+}
+
+/* INTERACTIVE MODULES */
+#pulseaudio:hover,
+#mic:hover,
+#custom-weather:hover,
+#backlight:hover {
+    background-color: #1a1a1a;
+}
+
+#pulseaudio.muted,
+#mic.muted {
+    color: #888888;
+    text-decoration: line-through;
+}
+
+/* BATTERY States */
+#battery.charging {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+#battery.warning:not(.charging) {
+    color: #000000;
+    background-color: #ffffff;
+}
+
+#battery.critical:not(.charging) {
+    background-color: #ffffff;
+    color: #000000;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        background-color: #000000;
+        color: #ffffff;
+    }
+}

@@ -1,0 +1,96 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 4,
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-center": [],
+    "modules-right": ["custom/weather", "pulseaudio", "pulseaudio#mic", "cpu", "custom/gpu", "memory", "disk", "network", "battery", "clock", "tray"],
+
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}"
+    },
+    "sway/window": {
+        "format": "{title}",
+        "max-length": 50,
+        "rewrite": {
+            "(.*) - Mozilla Firefox": "Firefox",
+            "(.*) - vim": "Vim",
+            "(.*) - zsh": "Terminal"
+        }
+    },
+    "custom/weather": {
+	"format": "{}",
+	"return-type": "json",
+	"exec": "sh ~/.config/waybar/scripts/weather.sh",
+	"interval": 3600,
+    },
+    "clock": {
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt>{calendar}</tt>",
+        "format": "{:%a, %d %b %H:%M}"
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "🔇 Muted",
+        "format-icons": {
+            "default": ["🔈", "🔉", "🔊"]
+        },
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "tooltip": false
+    },
+    "pulseaudio#mic": {
+        "format": "{format_source}",
+        "format-source": " {volume}%",
+        "format-source-muted": " Muted",
+        "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+        "tooltip": false
+    },
+    "cpu": {
+        "interval": 10,
+        "format": " {usage}% {avg_frequency}GHz",
+        "tooltip": false
+    },
+    "memory": {
+        "interval": 10,
+        "format": " {}%",
+        "tooltip": true,
+        "tooltip-format": "Memory: {used:0.1f}GB / {total:0.1f}GB"
+    },
+    "disk": {
+        "interval": 30,
+        "format": " {percentage_used}%",
+        "path": "/",
+        "tooltip": true,
+        "tooltip-format": "HDD: {used} / {total}"
+    },
+    "custom/gpu": {
+        "interval": 10,
+        "exec": "cat /sys/class/drm/card0/device/gpu_busy_percent",
+        "format": " {}%",
+        "tooltip": "GPU"
+    },
+    "network": {
+        "interval": 10,
+        "format-wifi": "{ipaddr}  ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+        "format-ethernet": "{ipaddr}  ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+        "format-linked": "{ifname} (No IP)",
+        "format-disconnected": "",
+        "tooltip-format": "{essid} ({ifname})"
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10
+    }
+}
