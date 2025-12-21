@@ -44,6 +44,10 @@
 ;; We just require use-package. Guix has already installed everything.
 (require 'use-package)
 
+(use-package envrc
+  :config
+  (envrc-global-mode))
+
 ;; ... (Keep your existing use-package blocks) ...
 (use-package gcmh :init (gcmh-mode 1))
 (use-package doom-themes :config (load-theme 'doom-ir-black t))
@@ -120,9 +124,17 @@
      (setq go-ts-mode-indent-offset 2)
      (add-hook 'before-save-hook #'eglot-format-buffer-on-save)))
 
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (fset 'yes-or-no-p 'y-or-n-p)
-;;             (horellana/toggle-frame-transparenc))
+(defun horellana/toggle-frame-transparency ()
+  "Toggle transparency of the background (PGTK specific)."
+  (interactive)
+  (let ((alpha (frame-parameter nil 'alpha-background)))
+    ;; Toggle between 100 and 90. If it's nil, assume it's 100.
+    (set-frame-parameter
+     nil 'alpha-background
+     (if (or (not alpha) (= alpha 100))
+         80
+       100))))
+
+(horellana/toggle-frame-transparency)
 
 (provide 'init)

@@ -7,7 +7,7 @@
 }
 
 window#waybar {
-    background: #000000;
+    background: rgba(0, 0, 0, 0.8);
     color: #ffffff;
 }
 
@@ -49,7 +49,7 @@ window#waybar {
     padding: 0 10px;
     margin: 0 0;
     color: #ffffff;
-    background-color: #000000;
+    background-color: transparent;
 }
 
 #clock {
