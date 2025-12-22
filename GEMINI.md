@@ -49,7 +49,9 @@ This command will:
 *   **Mod Key:** `Mod4` (Super/Windows key).
 *   **Terminal:** `foot`.
 *   **Launcher:** `wofi`.
-*   **Keybindings:** Standard vim-like navigation (`h`, `j`, `k`, `l`).
+*   **Keybindings:**
+    *   Standard vim-like navigation (`h`, `j`, `k`, `l`).
+    *   Move workspace to output: `Mod+Ctrl+Shift+Arrow`.
 *   **Wallpapers:** Managed via `random-wallpaper` script and an `mcron` job that fetches images from Reddit.
 
 ### Emacs
