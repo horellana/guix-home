@@ -1,0 +1,17 @@
+# 1. Undocked: Laptop only
+profile {
+    output eDP-1 enable
+}
+
+# 2. Docked: Clamshell mode 2 external monitors
+# Layout: [Left Monitor] - [Right Monitor]
+profile {
+
+    output eDP-1  disable
+
+    # Left Monitor (DVI-I-1) starts at 0 pixels
+    output DVI-I-1 enable mode 1920x1080 position 0,0
+
+    # Right Monitor (DVI-I-2) starts at 3840 pixels (1920 + 1920)
+    output DVI-I-2 enable mode 1920x1080 position 1920,0
+}

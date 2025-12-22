@@ -138,6 +138,7 @@
 (define my-wm-packages
   (list
    sway
+   kanshi
    swaylock
    swayidle
    waybar      
@@ -269,6 +270,7 @@
 		     `(".emacs.d/init.el" ,(local-file "emacs/init.el"))
 		     `(".config/foot/foot.ini" ,(local-file "foot/foot.ini"))
 		     `(".config/sway/config" ,(local-file "sway/sway.conf"))
+		     `(".config/kanshi/config" ,(local-file "kanshi/config"))
 		     `(".gtkrc-2.0" ,(local-file "gtk/gtkrc-2.0"))
 		     `(".config/gtk-3.0/settings.ini" ,(local-file "gtk/gtk3.ini"))
 		     `(".config/gtk-4.0/settings.ini" ,(local-file "gtk/gtk4.ini"))))
