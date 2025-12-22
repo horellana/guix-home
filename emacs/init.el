@@ -70,6 +70,9 @@
   :init (setq prefix-help-command #'embark-prefix-help-command))
 (use-package embark-consult)
 (use-package corfu
+  :bind
+  (:map global-map
+	("C-M-i" . completion-at-point))
   :init
   (global-corfu-mode)
   (corfu-history-mode)
