@@ -51,6 +51,7 @@
  (gnu packages gnupg)
  (gnu packages tree-sitter)
  (gnu packages password-utils)
+ (gnu packages rust-apps)
  
  (nongnu packages mozilla)
 
@@ -59,7 +60,6 @@
  (guix gexp)
  (gnu services mcron)
  (gnu home services mcron))
-
 
 (define my-emacs-packages
   (list
@@ -122,6 +122,7 @@
 
 (define my-utils-packages
   (list
+   ripgrep
    jq
    pavucontrol
    strace
