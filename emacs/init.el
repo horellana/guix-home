@@ -10,34 +10,6 @@
 (setq native-comp-async-jobs-number 12)
 
 ;; ... (Keep your UI Tweaks here) ...
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(blink-cursor-mode -1)
-(show-paren-mode 1)
-(global-hl-line-mode 1)
-(setq inhibit-startup-message t)
-(set-fringe-mode 0)
-(set-face-attribute 'fringe nil :foreground (face-foreground 'default) :background (face-background 'default))
-(setq frame-resize-pixelwise t)
-(add-hook 'window-setup-hook #'toggle-frame-maximized)
-(add-to-list 'default-frame-alist '(undecorated . t))
-(set-frame-font "DejaVu Sans Mono 14" nil t)
-
-;; ... (Keep your File Behavior here) ...
-(setq make-backup-files nil
-      create-lockfiles nil
-      backup-by-copying t
-      delete-old-versions t
-      kept-new-versions 1
-      kept-old-versions 2
-      version-control t
-      backup-directory-alist '((".*" . "~/.emacs.d/saves")))
-
-;; Transparency function
-(defun horellana/toggle-frame-transparency ()
-  (interactive)
-  (set-frame-parameter nil 'alpha 100))
 
 ;; --- 3. Package Management (SIMPLIFIED) ---
 ;; We REMOVED all the 'package-archives' and 'package-install' code.
@@ -59,16 +31,17 @@
 (use-package orderless
   :init
   (setq completion-styles '(orderless)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+	completion-category-defaults nil
+	completion-category-overrides '((file (styles partial-completion)))))
 (use-package marginalia :init (marginalia-mode))
 (use-package consult :bind (("C-c M-x" . consult-mode-command) 
-                            ("C-x b" . consult-buffer))) ;; (Shortened for brevity)
+			    ("C-x b" . consult-buffer))) ;; (Shortened for brevity)
 
 (use-package embark
   :bind (("C-." . embark-act))
   :init (setq prefix-help-command #'embark-prefix-help-command))
 (use-package embark-consult)
+
 (use-package corfu
   :bind
   (:map global-map
@@ -110,13 +83,55 @@
 (use-package plantuml-mode)
 (use-package jsdoc :commands (jsdoc))
 
-(setq js-indent-level 2)
+;; --- Guile & Guix Development Configuration ---
+
+(use-package geiser
+  :defer t
+  :config
+  (setq geiser-default-implementation 'guile)
+  ;; Stop Geiser from asking which implementation to use every time
+  (setq geiser-active-implementations '(guile))
+  ;; Use a slightly longer timeout for Guix operations which can be slow
+  (setq geiser-connection-timeout 30))
+
+(use-package geiser-guile
+  :after geiser
+  :config
+  ;; CRITICAL: Add the Guix Pull profile to Geiser's load path.
+  ;; This allows Geiser to find modules like (gnu packages ...) and (gnu services ...).
+  (add-to-list 'geiser-guile-load-path 
+	       "~/.config/guix/current/share/guile/site/3.0")
+  
+  ;; Add the compiled bytecode path (speeds up operations significantly)
+  (add-to-list 'geiser-guile-load-path 
+	       "~/.config/guix/current/lib/guile/3.0/site-ccache"))
+
+(use-package scheme-mode
+  :ensure nil ;; Built-in
+  :hook
+  ;; Enable Geiser automatically in Scheme buffers
+  (scheme-mode . geiser-mode-maybe)
+  ;; Enable indentation and Paredit/Smartparens
+  (scheme-mode . smartparens-mode) 
+  ;; Enable Semantic highlighting (optional, helps with variables)
+  (scheme-mode . font-lock-mode))
+
+;; --- Emacs-Guix Configuration ---
+;; You already have the package installed in home-config.scm.
+;; This provides specific Guix commands and "pretty" modes.
+(use-package emacs-guix
+  :hook 
+  ;; Augment Scheme mode with Guix-specific highlighting (e.g., packages in bold)
+  (scheme-mode . guix-prettify-mode)
+  :config
+  (setq guix-directory "~/.config/guix/current"))
+
 
 ;; --- 4. PlantUML (UPDATED) ---
 (eval-after-load "org"
   '(progn
      (setq org-log-done 'time
-           org-latex-compiler "xelatex")
+	   org-latex-compiler "xelatex")
      (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
      
      ;; CHANGED: Use the variable provided by guix-config.el
@@ -127,17 +142,46 @@
      (setq go-ts-mode-indent-offset 2)
      (add-hook 'before-save-hook #'eglot-format-buffer-on-save)))
 
-(defun horellana/toggle-frame-transparency ()
-  "Toggle transparency of the background (PGTK specific)."
-  (interactive)
-  (let ((alpha (frame-parameter nil 'alpha-background)))
-    ;; Toggle between 100 and 90. If it's nil, assume it's 100.
-    (set-frame-parameter
-     nil 'alpha-background
-     (if (or (not alpha) (= alpha 100))
-         80
-       100))))
+(eval-after-load "emacs"
+  '(progn
+     (setq use-short-answers t)
+     (setq js-indent-level 2)
 
-(horellana/toggle-frame-transparency)
+     (menu-bar-mode -1)
+     (tool-bar-mode -1)
+     (scroll-bar-mode -1)
+     (blink-cursor-mode -1)
+     (show-paren-mode 1)
+     (global-hl-line-mode 1)
+     (setq inhibit-startup-message t)
+     (set-fringe-mode 0)
+     (set-face-attribute 'fringe nil :foreground (face-foreground 'default) :background (face-background 'default))
+     (setq frame-resize-pixelwise t)
+     (add-hook 'window-setup-hook #'toggle-frame-maximized)
+     (add-to-list 'default-frame-alist '(undecorated . t))
+     (set-frame-font "DejaVu Sans Mono 14" nil t)
+
+     ;; ... (Keep your File Behavior here) ...
+     (setq make-backup-files nil
+	   create-lockfiles nil
+	   backup-by-copying t
+	   delete-old-versions t
+	   kept-new-versions 1
+	   kept-old-versions 2
+	   version-control t
+	   backup-directory-alist '((".*" . "~/.emacs.d/saves")))
+     
+     (defun horellana/toggle-frame-transparency ()
+       "Toggle transparency of the background (PGTK specific)."
+       (interactive)
+       (let ((alpha (frame-parameter nil 'alpha-background)))
+	 ;; Toggle between 100 and 90. If it's nil, assume it's 100.
+	 (set-frame-parameter
+	  nil 'alpha-background
+	  (if (or (not alpha) (= alpha 100))
+	      80
+	    100))))
+
+     (horellana/toggle-frame-transparency)))
 
 (provide 'init)
