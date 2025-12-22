@@ -100,6 +100,7 @@
    emacs-guix
    emacs-geiser
    emacs-geiser-guile
+   emacs-flycheck-guile
    
    ;; Treesitter Grammars
    tree-sitter-python
