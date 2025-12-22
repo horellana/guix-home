@@ -313,6 +313,7 @@
 		     `(".config/waybar/config" ,(local-file "waybar/config"))
 		     `(".config/waybar/style.css" ,(local-file "waybar/style.css"))
 		     `(".config/waybar/scripts/weather.sh" ,(local-file "waybar/scripts/weather.sh"))
+		     `(".config/waybar/scripts/speedtest.sh" ,(local-file "waybar/scripts/speedtest.sh"))
 		     `(".config/wofi/style.css" ,(local-file "wofi/style.css"))
 		     `(".tmux.conf" ,(local-file "tmux/tmux.conf"))
 		     `(".emacs.d/init.el" ,(local-file "emacs/init.el"))
