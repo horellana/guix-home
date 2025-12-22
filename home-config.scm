@@ -46,6 +46,8 @@
 
  (gnu packages qt)
  (gnu packages uml)
+ (gnu packages web)
+ (gnu packages file)
  (gnu packages gnupg)
  (gnu packages tree-sitter)
  (gnu packages password-utils)
@@ -119,6 +121,10 @@
 
 (define my-utils-packages
   (list
+   jq
+   pavucontrol
+   strace
+   file
    vim
    tmux
    htop  
@@ -207,13 +213,14 @@
                     "export SSL_CERT_DIR=/etc/ssl/certs; "
 		    "mkdir -p /home/hector/images/wallpapers && "
 		    #$reddit-image-downloader "/bin/reddit-image-downloader"
+		    " -sort=top"
+		    " -time=week"
 		    " -folder=/home/hector/images/wallpapers"
-		    " -subreddits=wallpapers,wallpaper,WHQD_Wallpaper,EarthPorn,spaceporn,lakeporn"
+		    " -subreddits=ImaginaryLandscapes,ImaginaryCityscapes,ImaginaryStarscapes,CityPorn,SkyPorn,WaterPorn,WidescreenWallpaper,MinimalWallpaper,Amoledbackground,wallpapers,wallpaper,WQHD_Wallpaper,EarthPorn,spaceporn,lakeporn"
 		    " 2>&1")
 		   
 		   ;; Job Name (optional, for logging)
 		   "reddit-wallpaper-job")))))
-
 
     (service home-bash-service-type
 	     (home-bash-configuration

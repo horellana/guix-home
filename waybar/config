@@ -73,7 +73,7 @@
     },
     "network": {
         "interval": 10,
-        "format-wifi": "{ipaddr}  ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
+        "format-wifi": "{essid} {ipaddr}  ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
         "format-ethernet": "{ipaddr}  ↓{bandwidthDownBytes} ↑{bandwidthUpBytes}",
         "format-linked": "{ifname} (No IP)",
         "format-disconnected": "",
