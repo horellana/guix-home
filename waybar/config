@@ -5,7 +5,7 @@
     "spacing": 4,
     "modules-left": ["sway/workspaces", "sway/mode"],
     "modules-center": [],
-    "modules-right": ["custom/weather", "pulseaudio", "pulseaudio#mic", "cpu", "custom/gpu", "memory", "disk", "network", "custom/speedtest", "battery", "clock", "tray"],
+    "modules-right": ["idle_inhibitor", "custom/weather", "pulseaudio", "pulseaudio#mic", "cpu", "custom/gpu", "memory", "disk", "network", "custom/speedtest", "battery", "clock", "tray"],
 
     "sway/workspaces": {
         "disable-scroll": true,
@@ -20,6 +20,13 @@
             "(.*) - vim": "Vim",
             "(.*) - zsh": "Terminal"
         }
+    },
+    "idle_inhibitor": {
+	"format": "{icon}",
+	"format-icons": {
+	    "activated": "",  // Eye open (Awake)
+	    "deactivated": "" // Eye closed (Can sleep)
+	}
     },
     "custom/weather": {
 	"format": "{}",

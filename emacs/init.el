@@ -1,19 +1,16 @@
 ;;; -*- lexical-binding: t; -*-
 
-;; --- 1. Load Guix Configuration ---
-;; This loads the file where Guix injects the store paths
 (load (expand-file-name "guix-config.el" user-emacs-directory) t)
 
-;; --- 2. Startup Performance ---
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 10 1024 1024))
-(setq native-comp-async-jobs-number 12)
+(setq native-comp-async-jobs-number 4)
 
-;; ... (Keep your UI Tweaks here) ...
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
-;; --- 3. Package Management (SIMPLIFIED) ---
-;; We REMOVED all the 'package-archives' and 'package-install' code.
-;; We just require use-package. Guix has already installed everything.
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (require 'use-package)
 
 (use-package envrc
@@ -21,8 +18,8 @@
   (envrc-global-mode))
 
 ;; ... (Keep your existing use-package blocks) ...
-(use-package gcmh :init (gcmh-mode 1))
-(use-package doom-themes :config (load-theme 'doom-ir-black t))
+;; (use-package gcmh :init (gcmh-mode 1))
+(use-package doom-themes :config (load-theme 'doom-laserwave t))
 (use-package doom-modeline :defer t :init (doom-modeline-mode 1))
 (use-package all-the-icons :after (doom-modeline) :if (display-graphic-p))
 
@@ -143,30 +140,71 @@
 (use-package embark-consult)
 
 (use-package corfu
-  :bind
-  (:map global-map
-	("C-M-i" . completion-at-point))
-  :init
-  (global-corfu-mode)
-  (corfu-history-mode)
-  (corfu-popupinfo-mode))
+  :init (progn
+	  (global-corfu-mode)
+	  (corfu-history-mode)
+	  (corfu-popupinfo-mode)))
 
 ;; ... (Keep Org Roam) ...
 (use-package org-roam
-  :custom (org-roam-directory (file-truename "~/.emacs.d/org-roam"))
-  :config (org-roam-db-autosync-enable))
-(use-package consult-org-roam :after (org-roam) :config (consult-org-roam-mode 1))
+  :commands (org-agenda)
+  :custom
+  (org-roam-directory (file-truename "~/.emacs.d/org-roam"))
+  (org-roam-dailies-directory "daily/")
+  (org-roam-completion-everywhere t)
 
-;; ... (Keep Programming Tools) ...
-(use-package flymake-flycheck :hook ((flymake-mode . flymake-flycheck-auto)))
-(use-package eglot :defer t)
+  :bind (("C-c n f" . org-roam-node-find)
+	 ("C-c n i" . org-roam-node-insert)
+	 ;; Dailies bindings
+	 ("C-c n d n" . org-roam-dailies-capture-today)
+	 ("C-c n d d" . org-roam-dailies-goto-today)
+	 ("C-c n d y" . org-roam-dailies-goto-yesterday)
+	 ("C-c n d t" . org-roam-dailies-goto-tomorrow))
+
+  :config (progn
+	    (with-eval-after-load "org-roam"
+	      (progn 
+		(setq org-agenda-files
+		      (-map  (lambda (path)
+			       (file-name-concat org-roam-directory path))
+			     (-filter (lambda (path)
+					(not (or (equal "." path)
+						 (equal ".." path))))
+				      (directory-files org-roam-directory))))))
+	    (org-roam-db-autosync-enable)))
+
+(use-package consult-org-roam
+  :after (org-roam)
+  :config (progn
+	    (consult-org-roam-mode 1)))
+
+(use-package flymake-flycheck :hook
+  ((prog-mode . flymake-mode)
+   (flymake-mode . flymake-flycheck-auto)))
+
+(use-package eglot
+ :commands (eglot eglot-ensure))
+
 (use-package eldoc-box :after eldoc :bind (("C-c K" . eldoc-box-help-at-point)))
-(use-package smartparens-config :ensure nil :init (smartparens-global-mode))
 (use-package yasnippet :config (yas-global-mode 1))
 (use-package yasnippet-snippets :after (yasnippet))
-(use-package which-key :init (which-key-mode))
 
-;; ... (Keep Evil Mode) ...
+(use-package smartparens-config
+  :ensure nil
+  :init (progn
+	  (setq sp-base-key-bindings 'paredit)
+	  (smartparens-global-mode))
+  
+  :config (progn
+	    (define-key smartparens-mode-map (kbd "M-s") nil)
+	    (define-key smartparens-mode-map (kbd "M-S") #'sp-splice-sexp)
+	    (add-hook 'smartparens-mode-hook #'smartparens-strict-mode)))
+
+(use-package which-key
+  :defer t
+  :config (progn
+	    (which-key-mode)))
+
 (use-package evil :init (evil-mode 1))
 (use-package evil-leader
   :after evil
@@ -177,49 +215,35 @@
 (use-package evil-org :hook ((org-mode . evil-org-mode))
   :config (require 'evil-org-agenda) (evil-org-agenda-set-keys))
 
-;; ... (Keep Project Tools) ...
 (use-package project :defer t)
 (use-package magit :commands (magit-status))
 (use-package plantuml-mode)
 (use-package jsdoc :commands (jsdoc))
 
-;; --- Guile & Guix Development Configuration ---
-
 (use-package geiser
   :hook (scheme-mode . geiser-mode)
   :config
   (setq geiser-default-implementation 'guile)
-  ;; Stop Geiser from asking which implementation to use every time
   (setq geiser-active-implementations '(guile))
-  ;; Use a slightly longer timeout for Guix operations which can be slow
   (setq geiser-connection-timeout 30))
 
 (use-package geiser-guile
   :after geiser
   :config
-  ;; CRITICAL: Add the Guix Pull profile to Geiser's load path.
-  ;; This allows Geiser to find modules like (gnu packages ...) and (gnu services ...).
   (add-to-list 'geiser-guile-load-path 
 	       "~/.config/guix/current/share/guile/site/3.0")
   
-  ;; Add the compiled bytecode path (speeds up operations significantly)
   (add-to-list 'geiser-guile-load-path 
 	       "~/.config/guix/current/lib/guile/3.0/site-ccache"))
 
 (use-package scheme
   :ensure nil ;; Built-in
   :hook
-  ;; Enable indentation and Paredit/Smartparens
-  (scheme-mode . smartparens-mode) 
-  ;; Enable Semantic highlighting (optional, helps with variables)
+  (scheme-mode . smartparens-mode)
   (scheme-mode . font-lock-mode))
 
-;; --- Emacs-Guix Configuration ---
-;; You already have the package installed in home-config.scm.
-;; This provides specific Guix commands and "pretty" modes.
 (use-package emacs-guix
   :hook 
-  ;; Augment Scheme mode with Guix-specific highlighting (e.g., packages in bold)
   (scheme-mode . guix-prettify-mode)
   :config
   (setq guix-directory "~/.config/guix/current"))
@@ -227,13 +251,11 @@
 (use-package flycheck-guile
   :after (flycheck geiser-guile)
   :config
-  ;; Sync Flycheck paths with Geiser paths so it can find Guix modules
   (setq flycheck-guile-library-path 
         (append geiser-guile-load-path
                 '("~/.config/guix/current/share/guile/site/3.0"
                   "~/.config/guix/current/lib/guile/3.0/site-ccache"))))
 
-;; --- 4. PlantUML (UPDATED) ---
 (eval-after-load "org"
   '(progn
      (setq org-log-done 'time
@@ -251,6 +273,8 @@
 (setq use-short-answers t)
 (setq js-indent-level 2)
 
+(global-set-key (kbd "C-M-i") 'completion-at-point)
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -263,9 +287,13 @@
 (setq frame-resize-pixelwise t)
 (add-hook 'window-setup-hook #'toggle-frame-maximized)
 (add-to-list 'default-frame-alist '(undecorated . t))
-(set-frame-font "DejaVu Sans Mono 14" nil t)
+(set-frame-font "Noto Sans Mono Medium 14" nil t)
 
-;; ... (Keep your File Behavior here) ...
+(custom-set-faces
+'(flymake-note    ((t (:underline (:style line :color "#00aa00"))))) 
+ '(flymake-error ((t (:underline (:style line :color "#ff0000")))))
+ '(flymake-warning ((t (:underline (:style line :color "#ffa500"))))))
+
 (setq make-backup-files nil
       create-lockfiles nil
       backup-by-copying t

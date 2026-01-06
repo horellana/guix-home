@@ -15,6 +15,8 @@
  (gnu home services desktop)
  (gnu home services shepherd)
  
+ (gnu packages bash)
+ (gnu packages base)
  (gnu packages emacs)
  (gnu packages emacs-xyz)
  (gnu packages shellutils)
@@ -31,6 +33,7 @@
  (gnu packages curl)
  (gnu packages version-control)
  (gnu packages ssh)
+ (gnu packages image-viewers)
  (guix gexp)
  (guix inferior)
  
@@ -53,22 +56,23 @@
  (gnu packages tree-sitter)
  (gnu packages password-utils)
  (gnu packages rust-apps)
+ (gnu packages pdf)
 
+ (gnu packages man)
  (gnu packages glib)
  (gnu packages freedesktop)
  
  (nongnu packages mozilla)
+ (nongnu packages chrome)
 
  (my-packages reddit-image-downloader)
  (my-scripts set-wallpaper)
- (guix gexp)
  (gnu services mcron)
  (gnu home services mcron))
 
 (define my-emacs-packages
   (list
    emacs-pgtk
-   emacs-gcmh
    emacs-use-package
    emacs-doom-themes
    emacs-doom-modeline
@@ -85,7 +89,7 @@
    emacs-corfu
    emacs-org-roam
    emacs-consult-org-roam
-   emacs-evil-org
+   emacs-org-journal
    emacs-magit
    emacs-flymake-flycheck
    emacs-eglot
@@ -96,8 +100,10 @@
    emacs-plantuml-mode
    emacs-jsdoc
    emacs-evil
+   emacs-evil-smartparens
    emacs-evil-leader
    emacs-evil-commentary
+   emacs-evil-org
    emacs-envrc
 
    ;; Guix development
@@ -105,6 +111,8 @@
    emacs-geiser
    emacs-geiser-guile
    emacs-flycheck-guile
+
+   emacs-direnv
    
    ;; Treesitter Grammars
    tree-sitter-python
@@ -112,20 +120,27 @@
    tree-sitter-javascript
    tree-sitter-typescript
    tree-sitter-json
-   tree-sitter-bash))
+   tree-sitter-bash
+   tree-sitter-rust))
 
 (define my-font-packages
   (list font-awesome
 	font-dejavu             
 	font-google-noto
-	font-jetbrains-mono 
+	font-cica
+	font-google-noto-sans-cjk
+	font-google-noto-serif-cjk
 	font-google-noto-emoji))
 
 (define my-dev-packages
-  (list direnv))
+  (list man-pages
+	man-pages-posix
+	direnv))
 
 (define my-utils-packages
   (list
+   nautilus
+   imv
    ripgrep
    jq
    pavucontrol
@@ -137,6 +152,8 @@
    curl
    git
    openssh
+   zathura
+   zathura-pdf-mupdf
    unzip
    random-wallpaper
    reddit-image-downloader))
@@ -162,7 +179,8 @@
 (define my-other-packages
   (list
    xeyes
-   firefox
+   ;; firefox
+   google-chrome-stable
 
    mesa 
    
@@ -198,6 +216,116 @@
 		   (file-append plantuml "/share/java/plantuml.jar") 
 		   "\")\n"))
 
+(define random-wallpaper-lock
+  (program-file
+   "random-wallpaper-lock"
+   #~(begin
+       (use-modules (ice-9 popen)   
+                    (ice-9 rdelim)  
+                    (ice-9 ftw)     
+                    (ice-9 match)
+                    (srfi srfi-1)   
+                    (srfi srfi-26)) 
+
+       (define swaymsg  #$(file-append sway "/bin/swaymsg"))
+       (define swaylock #$(file-append swaylock "/bin/swaylock"))
+       (define jq       #$(file-append jq "/bin/jq"))
+       (define bash     #$(file-append bash "/bin/bash"))
+
+       (define (get-outputs)
+         (let* ((cmd (string-join (list swaymsg "-t get_outputs |" jq "-r '.[].name'") " "))
+                (port (open-pipe* OPEN_READ bash "-c" cmd)))
+           (let loop ((line (read-line port)) (acc '()))
+             (if (eof-object? line)
+                 (begin (close-pipe port) (reverse acc))
+                 (loop (read-line port) (cons line acc))))))
+
+       (define (get-wallpapers dir)
+         (if (file-exists? dir)
+             (let ((files (scandir dir (lambda (f) 
+                                         ;; Filter out "." and ".." and hidden files
+                                         (not (string-prefix? "." f))))))
+               (if files
+                   (map (lambda (f) (string-append dir "/" f)) files)
+                   '()))
+             '()))
+
+       (define (pick-random lst)
+         (let ((state (random-state-from-platform)))
+           (list-ref lst (random (length lst) state))))
+
+       (let* ((home (getenv "HOME"))
+              (wall-dir (string-append home "/images/wallpapers"))
+              (outputs (get-outputs))
+              (wallpapers (get-wallpapers wall-dir)))
+
+         (with-output-to-file "/tmp/swaylock.log"
+           (lambda ()
+             (display (string-append "Locking at " (strftime "%c" (localtime (current-time))) "\n"))
+             
+             (cond
+              ((null? wallpapers)
+               (display "WARNING: No wallpapers found. Using black fallback.\n")
+               (execl swaylock "swaylock" "-f" "-c" "000000"))
+
+              (else
+               (let ((args (fold (lambda (output acc)
+                                   (let ((wp (pick-random wallpapers)))
+                                     (format #t "Output: ~a -> ~a\n" output wp)
+                                     (cons* "-i" (string-append output ":" wp) acc)))
+                                 '()
+                                 outputs)))
+
+                 (apply execl swaylock "swaylock" "-f" args))))
+             #:append #t))))))
+
+(define my-swayidle-service
+  (service home-shepherd-service-type
+           (home-shepherd-configuration
+            (services
+             (list (shepherd-service
+                    (provision '(swayidle))
+                    (requirement '()) 
+		    (auto-start? #f)
+                    (documentation "Idle manager for Sway")
+                    (start #~(make-forkexec-constructor
+                              (list #$(file-append bash "/bin/bash") "-c"
+                                    (string-join 
+                                     (list 
+                                      ;; 1. Environment Setup
+                                      ;; We find the socket dynamically because Shepherd doesn't know it.
+                                      "export SWAYSOCK=$(find /run/user/$(id -u) -name 'sway-ipc.*.sock' -print -quit);"
+                                      "export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-1};"
+                                      
+                                      ;; 2. Start swayidle
+                                      ;; We use 'exec' so swayidle takes over the bash PID.
+                                      (string-append "exec " #$(file-append swayidle "/bin/swayidle") " -w")
+                                      
+                                      ;; 3. Arguments
+                                      ;; timeout 300: Lock Screen
+                                      "timeout 300" #$random-wallpaper-lock
+                                      
+                                      ;; timeout 600: Screen Off
+                                      ;; Note: We wrap the command in single quotes '...' so swayidle sees it as one arg.
+                                      "timeout 600" (string-append "'" #$(file-append sway "/bin/swaymsg") " \"output * dpms off\"'")
+                                      
+                                      ;; resume: Screen On
+                                      "resume"      (string-append "'" #$(file-append sway "/bin/swaymsg") " \"output * dpms on\"'")
+                                      
+                                      ;; timeout 900: Suspend
+                                      "timeout 900" (string-append "'" #$(file-append elogind "/bin/loginctl") " suspend'")
+                                      
+                                      ;; before-sleep: Lock Screen
+                                      "before-sleep" #$random-wallpaper-lock)
+                                     
+                                     ;; Join all parts with a space
+                                     " "))
+                              
+                              ;; 4. Log File
+                              ;; The parenthesis is now CORRECTLY placed after this argument.
+                              #:log-file (string-append (getenv "HOME") "/.local/share/shepherd/swayidle.log")))
+                    (stop #~(make-kill-destructor))))))))
+
 (home-environment
  (packages 
   (append 
@@ -213,7 +341,8 @@
  (services
   (append
    (list
-    ;; (service home-pipewire-service-type)
+    my-swayidle-service
+
     (service home-dbus-service-type)
 
     (simple-service 'pipewire-services
@@ -245,7 +374,6 @@
 				(list #$(file-append pipewire "/bin/pipewire-pulse"))))
 		      (stop #~(make-kill-destructor)))))
     
-    
     (service home-mcron-service-type
 	     (home-mcron-configuration
 	      (jobs
@@ -275,6 +403,8 @@
 	      (guix-defaults? #t)
 	      (bashrc 
 	       (list 
+		(plain-file "direnv-setup"
+                        "eval \"$(direnv hook bash)\"")
 		(plain-file "gpg-agent-setup" 
 			    (string-append
 			     "export GPG_TTY=$(tty)\n"
@@ -301,7 +431,8 @@
 
     (simple-service 'wayland-env-vars-service
 		    home-environment-variables-service-type
-		    `(("GDK_BACKEND" . "wayland")
+		    `(("GTK_THEME" . "Adwaita:dark")
+		      ("GDK_BACKEND" . "wayland")
 		      ("MOZ_ENABLE_WAYLAND" . "1")      
 		      ("XDG_CURRENT_DESKTOP" . "sway")  
 		      ("XDG_SESSION_TYPE" . "wayland")))
@@ -309,6 +440,7 @@
     (simple-service 'dotfiles
 		    home-files-service-type
 		    (list 
+		     `(".config/zathura/zathurarc" ,(local-file "zathura/zathurarc"))
 		     `(".config/xdg-desktop-portal/portals.conf" ,(local-file "xdg/portals.conf"))
 		     `(".config/waybar/config" ,(local-file "waybar/config"))
 		     `(".config/waybar/style.css" ,(local-file "waybar/style.css"))

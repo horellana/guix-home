@@ -3,7 +3,7 @@
 window {
     margin: 0px;
     border: 2px solid gray; /* Stark white border for high contrast */
-    background-color: #000000; /* Pure black background */
+    background-color: rgba(0, 0, 0, 0.7); /* Pure black background */
     border-radius: 0px;        /* Sharp corners usually fit high-contrast better */
     font-family: monospace;
     font-size: 16px;
@@ -12,7 +12,7 @@ window {
 #input {
     margin: 5px;
     border: 1px solid gray; /* White border to define input box */
-    background-color: #000000; /* Pure black input */
+    background-color: rgba(0, 0, 0, 0.7); /* Pure black input */
     color: #ffffff;            /* White text */
     border-radius: 0px;
     padding: 5px;
@@ -21,12 +21,14 @@ window {
 #inner-box {
     margin: 5px;
     background-color: #000000;
+    background-color: transparent;
 }
 
 #outer-box {
     margin: 5px;
     border: none;
     background-color: #000000;
+    background-color: transparent;
 }
 
 #scroll {
@@ -51,57 +53,3 @@ window {
     color: #000000; /* Pure black text for selected item */
     font-weight: bold;
 }
-
-/* /\* ~/.config/wofi/style.css *\/ */
-
-/* window { */
-/*     margin: 0px; */
-/*     border: 2px solid #454545; /\* Dark grey border *\/ */
-/*     background-color: #1e1e1e; /\* Deep dark background *\/ */
-/*     border-radius: 10px;       /\* Rounded corners *\/ */
-/*     font-family: monospace;    /\* Matches your terminal vibe *\/ */
-/*     font-size: 16px; */
-/* } */
-
-/* #input { */
-/*     margin: 5px; */
-/*     border: none; */
-/*     background-color: #2d2d2d; /\* Slightly lighter input field *\/ */
-/*     color: #ffffff;            /\* White text *\/ */
-/*     border-radius: 5px; */
-/*     padding: 5px; */
-/* } */
-
-/* #inner-box { */
-/*     margin: 5px; */
-/*     background-color: #1e1e1e; */
-/* } */
-
-/* #outer-box { */
-/*     margin: 5px; */
-/*     border: none; */
-/*     background-color: #1e1e1e; */
-/* } */
-
-/* #scroll { */
-/*     margin: 0px; */
-/*     border: none; */
-/* } */
-
-/* #text { */
-/*     margin: 5px; */
-/*     border: none; */
-/*     color: #cccccc; /\* Light grey text for unselected items *\/ */
-/* } */
-
-/* /\* The currently selected item *\/ */
-/* #entry:selected { */
-/*     background-color: #007acc; /\* VS Code blue for selection *\/ */
-/*     border-radius: 5px; */
-/*     border: none; */
-/* } */
-
-/* #entry:selected #text { */
-/*     color: #ffffff; /\* Bright white text for selected item *\/ */
-/*     font-weight: bold; */
-/* } */
