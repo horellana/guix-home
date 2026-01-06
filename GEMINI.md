@@ -7,7 +7,7 @@ This directory contains the declarative system configuration for a user environm
 *   **Type:** System Configuration (Dotfiles)
 *   **Manager:** GNU Guix (Guix Home)
 *   **Desktop Environment:** Sway (Wayland)
-*   **Key Components:** Sway, Waybar, Wofi, Foot, Emacs, GPG, SSH.
+*   **Key Components:** Sway, Waybar, Wofi, Foot, Emacs, Kanshi, Zathura, GPG, SSH.
 
 The configuration uses Scheme `(home-config.scm)` to define packages and services, and deploys standard dotfiles (e.g., `.config/sway/config`) from the local directory to the user's home directory.
 
@@ -26,7 +26,7 @@ The configuration uses Scheme `(home-config.scm)` to define packages and service
 *   `sway/`: Configuration for the Sway window manager (`sway.conf`).
 *   `waybar/`: Configuration (`config`) and styling (`style.css`) for the Waybar status bar, plus scripts.
 *   `emacs/`: Emacs initialization file (`init.el`).
-*   `foot/`, `tmux/`, `wofi/`, `gtk/`: Configurations for the Foot terminal, Tmux, Wofi launcher, and GTK theming.
+*   `foot/`, `tmux/`, `wofi/`, `gtk/`, `kanshi/`, `xdg/`, `zathura/`: Configurations for the Foot terminal, Tmux, Wofi launcher, GTK theming, Kanshi display manager, XDG portals, and Zathura PDF viewer.
 *   `gnupg/`: GnuPG configuration files.
 *   `.gitignore`: Git ignore patterns.
 

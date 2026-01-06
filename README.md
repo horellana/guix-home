@@ -26,7 +26,7 @@ This repository contains my personal declarative system configuration managed by
 - `sway/`: Sway configuration (`sway.conf`).
 - `waybar/`: Waybar config, styling, and scripts.
 - `emacs/`: Emacs initialization (`init.el`).
-- `foot/`, `tmux/`, `wofi/`, `gtk/`: Configs for other core tools.
+- `foot/`, `tmux/`, `wofi/`, `gtk/`, `kanshi/`, `xdg/`, `zathura/`: Configs for other core tools (terminal, display manager, portals, PDF viewer).
 - `gnupg/`: GPG configuration.
 
 ## Installation
