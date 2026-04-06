@@ -440,6 +440,7 @@
     (simple-service 'dotfiles
 		    home-files-service-type
 		    (list 
+		     `(".local/share/applications/google-chrome.desktop" ,(local-file "chrome/google-chrome-vulkan.desktop"))
 		     `(".config/zathura/zathurarc" ,(local-file "zathura/zathurarc"))
 		     `(".config/xdg-desktop-portal/portals.conf" ,(local-file "xdg/portals.conf"))
 		     `(".config/waybar/config" ,(local-file "waybar/config"))
