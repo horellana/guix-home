@@ -1,65 +1,22 @@
-# Guix Home Configuration
-
-This directory contains the declarative system configuration for a user environment managed by [Guix Home](https://guix.gnu.org/manual/en/html_node/Home-Configuration.html). It sets up a complete Wayland-based desktop environment centered around the Sway window manager, along with development tools, Emacs configuration, and various utilities.
+# Guix Home Configuration Project Context
 
 ## Project Overview
+This directory contains a declarative personal system configuration managed by Guix Home. It provides a reproducible, complete Wayland-based desktop environment.
+- **Core Technology:** GNU Guix (Guix Home), Guile Scheme.
+- **Desktop Environment:** Sway (Wayland window manager), Waybar (status bar), Foot (terminal), Wofi (launcher).
+- **Editor:** Emacs (configured via `use-package` with Evil mode, Org Roam, and Treesitter).
+- **Service Management:** GNU Shepherd (managed by Guix Home).
+- **Custom Integrations:** Includes custom services like `swayidle` setup and an `mcron` job for automatically downloading and rotating Reddit wallpapers.
 
-*   **Type:** System Configuration (Dotfiles)
-*   **Manager:** GNU Guix (Guix Home)
-*   **Desktop Environment:** Sway (Wayland)
-*   **Key Components:** Sway, Waybar, Wofi, Foot, Emacs, Kanshi, Zathura, GPG, SSH.
-
-The configuration uses Scheme `(home-config.scm)` to define packages and services, and deploys standard dotfiles (e.g., `.config/sway/config`) from the local directory to the user's home directory.
-
-## Prerequisites
-
-*   **GNU Guix:** Must be installed on the host system.
-*   **External Modules:** The configuration expects a directory at `~/guix-packages` containing custom modules:
-    *   `(my-packages reddit-image-downloader)`
-    *   `(my-scripts set-wallpaper)`
-    
-    Ensure this directory exists and is populated, or adjust the `add-to-load-path` in `home-config.scm`.
-
-## Directory Structure
-
-*   `home-config.scm`: The main entry point. Defines the `home-environment`, including all packages, services (mcron, bash, gpg, ssh), and file mappings.
-*   `sway/`: Configuration for the Sway window manager (`sway.conf`).
-*   `waybar/`: Configuration (`config`) and styling (`style.css`) for the Waybar status bar, plus scripts.
-*   `emacs/`: Emacs initialization file (`init.el`).
-*   `foot/`, `tmux/`, `wofi/`, `gtk/`, `kanshi/`, `xdg/`, `zathura/`: Configurations for the Foot terminal, Tmux, Wofi launcher, GTK theming, Kanshi display manager, XDG portals, and Zathura PDF viewer.
-*   `gnupg/`: GnuPG configuration files.
-*   `.gitignore`: Git ignore patterns.
-
-## Usage
-
-To apply this configuration to your user profile, run the following command from this directory:
-
+## Building and Applying Configuration
+To apply this configuration to the user profile:
 ```bash
 guix home reconfigure home-config.scm
 ```
+There is also a bash alias configured (`guix-home-update`) that handles updating Guix and applying the configuration over a VPN.
 
-This command will:
-1.  Download and build specified packages.
-2.  Start defined services (e.g., `gpg-agent`, `mcron`).
-3.  Symlink configuration files from the store to your home directory (e.g., `~/.config/sway/config`).
-
-## Key Configuration Details
-
-### Window Manager (Sway)
-*   **Mod Key:** `Mod4` (Super/Windows key).
-*   **Terminal:** `foot`.
-*   **Launcher:** `wofi`.
-*   **Keybindings:**
-    *   Standard vim-like navigation (`h`, `j`, `k`, `l`).
-    *   Move workspace to output: `Mod+Ctrl+Shift+Arrow`.
-*   **Wallpapers:** Managed via `random-wallpaper` script and an `mcron` job that fetches images from Reddit.
-
-### Emacs
-*   Configured via `emacs/init.el` and a generated `guix-config.el`.
-*   Uses `use-package` for package management (though packages are installed via Guix).
-*   Includes configuration for Evil mode, Org Roam, Magit, and Treesitter.
-
-### Services
-*   **Mcron:** Scheduled jobs for wallpaper updates.
-*   **GPG/SSH:** Configured with `pinentry-gnome3` and SSH support.
-*   **Environment:** Sets necessary Wayland environment variables (e.g., `MOZ_ENABLE_WAYLAND`, `XDG_SESSION_TYPE`).
+## Architecture & Conventions
+- **`home-config.scm`:** The central configuration file. It defines the `home-environment`, specifying packages to install, services to run, and file mappings for dotfiles.
+- **Dotfiles Organization:** Application-specific configurations (e.g., Sway, Waybar, Emacs) are organized into their respective subdirectories (e.g., `sway/`, `waybar/`, `emacs/`). These are mapped into the user's home directory using Guix's `local-file` mechanism within `home-config.scm`.
+- **Custom Packages:** The configuration relies on a local custom package collection located at `~/guix-packages`. The load path is explicitly updated in `home-config.scm` to include this directory.
+- **Code Style:** Configuration is written in Guile Scheme. When modifying `home-config.scm`, ensure idiomatic Scheme formatting and structural consistency.
