@@ -34,6 +34,7 @@
  (gnu packages version-control)
  (gnu packages ssh)
  (gnu packages image-viewers)
+ (gnu packages pulseaudio)
  (guix gexp)
  (guix inferior)
  
@@ -43,7 +44,6 @@
 
  (gnu packages image)      
  (gnu packages music)      
- (gnu packages pulseaudio) 
  (gnu packages linux)      
 
  (gnu packages gl)
@@ -172,7 +172,6 @@
 
 (define my-icons-packages
   (list
-   adwaita-icon-theme
    hicolor-icon-theme
    adwaita-icon-theme))
 
@@ -184,7 +183,6 @@
 
    mesa 
    
-   pulseaudio    
    playerctl     
    brightnessctl 
    
@@ -389,18 +387,23 @@
 		    "export SSL_CERT_DIR=/etc/ssl/certs; "
 		    "mkdir -p /home/hector/images/wallpapers && "
 		    #$reddit-image-downloader "/bin/reddit-image-downloader"
+		    " -min-res=4k"
 		    " -sort=top"
 		    " -time=week"
 		    " -folder=/home/hector/images/wallpapers"
 		    " -subreddits=ImaginaryLandscapes,ImaginaryCityscapes,ImaginaryStarscapes,CityPorn,SkyPorn,WaterPorn,WidescreenWallpaper,MinimalWallpaper,Amoledbackground,wallpapers,wallpaper,WQHD_Wallpaper,EarthPorn,spaceporn,lakeporn"
 		    " 2>&1")
-		   
-		   ;; Job Name (optional, for logging)
 		   "reddit-wallpaper-job")))))
 
     (service home-bash-service-type
 	     (home-bash-configuration
 	      (guix-defaults? #t)
+	      (aliases
+               '(("gemini" . "guix shell node -- npx @google/gemini-cli")
+		 ("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
+                 ("warp-off"    . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick down ./wgcf-profile.conf)")
+                 ("warp-status" . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg show)")
+		 ("guix-home-update" . "nice -n 20 sh -c 'warp-on && guix pull && guix home reconfigure $HOME/.config/guix-home/home-config.scm; warp-off'")))
 	      (bashrc 
 	       (list 
 		(plain-file "direnv-setup"
@@ -435,7 +438,13 @@
 		      ("GDK_BACKEND" . "wayland")
 		      ("MOZ_ENABLE_WAYLAND" . "1")      
 		      ("XDG_CURRENT_DESKTOP" . "sway")  
-		      ("XDG_SESSION_TYPE" . "wayland")))
+		      ("XDG_SESSION_TYPE" . "wayland")
+		      ("LIBVA_DRIVER_NAME" . "radeonsi")
+		      ("RADV_PERFTEST" . "aco")
+		      ("mesa_glthread" . "true")
+		      ("WLR_NO_HARDWARE_CURSORS" . "1")
+		      ("vblank_mode" . "0")
+		      ("MESA_LOADER_DRIVER_OVERRIDE" . "radeonsi")))
 
     (simple-service 'dotfiles
 		    home-files-service-type
@@ -459,7 +468,8 @@
     
     (service home-channels-service-type
 	     (append
-	      (list (channel
+	      (list
+	       (channel
 		     (name 'nonguix)
 		     (url "https://gitlab.com/nonguix/nonguix")
 		     (introduction
