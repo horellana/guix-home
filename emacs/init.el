@@ -18,10 +18,10 @@
   (envrc-global-mode))
 
 ;; ... (Keep your existing use-package blocks) ...
-;; (use-package gcmh :init (gcmh-mode 1))
-(use-package doom-themes :config (load-theme 'doom-laserwave t))
-(use-package doom-modeline :defer t :init (doom-modeline-mode 1))
-(use-package all-the-icons :after (doom-modeline) :if (display-graphic-p))
+(use-package ef-themes :config (load-theme 'ef-winter))
+;; (use-package doom-themes :config (load-theme 'doom-laserwave t))
+;; (use-package doom-modeline :defer t :init (doom-modeline-mode 1))
+;; (use-package all-the-icons :after (doom-modeline) :if (display-graphic-p))
 
 ;; ... (Keep Vertico, Consult, etc.) ...
 (use-package vertico :init (vertico-mode))
@@ -287,7 +287,7 @@
 (setq frame-resize-pixelwise t)
 (add-hook 'window-setup-hook #'toggle-frame-maximized)
 (add-to-list 'default-frame-alist '(undecorated . t))
-(set-frame-font "Noto Sans Mono Medium 14" nil t)
+(set-frame-font "Noto Sans Mono Medium 20" nil t)
 
 (custom-set-faces
 '(flymake-note    ((t (:underline (:style line :color "#00aa00"))))) 
