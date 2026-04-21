@@ -61,6 +61,7 @@
  (gnu packages man)
  (gnu packages glib)
  (gnu packages freedesktop)
+ (gnu packages emulators)
  
  (nongnu packages mozilla)
  (nongnu packages chrome)
@@ -74,6 +75,7 @@
   (list
    emacs-pgtk
    emacs-use-package
+   emacs-dumb-jump
    emacs-doom-themes
    emacs-doom-modeline
    emacs-all-the-icons
@@ -108,9 +110,9 @@
 
    ;; Guix development
    emacs-guix
+   emacs-flycheck-guile
    emacs-geiser
    emacs-geiser-guile
-   emacs-flycheck-guile
 
    emacs-direnv
    
@@ -178,10 +180,10 @@
 (define my-other-packages
   (list
    xeyes
-   ;; firefox
    google-chrome-stable
 
    mesa 
+   wireplumber
    
    playerctl     
    brightnessctl 
@@ -201,6 +203,9 @@
 	xdg-desktop-portal-wlr
 	xdg-desktop-portal-gtk
 	slurp))
+
+(define my-games-packages
+  (list bsnes))
 
 (define guix-emacs-config
   (mixed-text-file "guix-config.el"
@@ -253,7 +258,7 @@
            (list-ref lst (random (length lst) state))))
 
        (let* ((home (getenv "HOME"))
-              (wall-dir (string-append home "/images/wallpapers"))
+              (wall-dir (string-append home "/images/wallpapers/4k"))
               (outputs (get-outputs))
               (wallpapers (get-wallpapers wall-dir)))
 
@@ -334,7 +339,8 @@
    my-icons-packages
    my-other-packages
    my-emacs-packages
-   my-xdg-packages))
+   my-xdg-packages
+   my-games-packages))
  
  (services
   (append
@@ -391,7 +397,7 @@
 		    " -sort=top"
 		    " -time=week"
 		    " -folder=/home/hector/images/wallpapers"
-		    " -subreddits=ImaginaryLandscapes,ImaginaryCityscapes,ImaginaryStarscapes,CityPorn,SkyPorn,WaterPorn,WidescreenWallpaper,MinimalWallpaper,Amoledbackground,wallpapers,wallpaper,WQHD_Wallpaper,EarthPorn,spaceporn,lakeporn"
+		    " subreddits=ImaginaryLandscapes,ImaginaryCityscapes,ImaginaryStarscapes,CityPorn,SkyPorn,WaterPorn,WidescreenWallpaper,MinimalWallpaper,Amoledbackground,wallpapers,wallpaper,WQHD_Wallpaper,EarthPorn,spaceporn,lakeporn"
 		    " 2>&1")
 		   "reddit-wallpaper-job")))))
 
@@ -403,7 +409,7 @@
 		 ("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
                  ("warp-off"    . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick down ./wgcf-profile.conf)")
                  ("warp-status" . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg show)")
-		 ("guix-home-update" . "nice -n 20 sh -c 'warp-on && guix pull && guix home reconfigure $HOME/.config/guix-home/home-config.scm; warp-off'")))
+		 ("guix-home-update" . "warp-on && nice -n 20 guix pull && nice -n 20 guix home reconfigure $HOME/.config/guix-home/home-config.scm; warp-off")))
 	      (bashrc 
 	       (list 
 		(plain-file "direnv-setup"
@@ -442,7 +448,7 @@
 		      ("LIBVA_DRIVER_NAME" . "radeonsi")
 		      ("RADV_PERFTEST" . "aco")
 		      ("mesa_glthread" . "true")
-		      ("WLR_NO_HARDWARE_CURSORS" . "1")
+		      ("WLR_RENDERER" . "vulkan")
 		      ("vblank_mode" . "0")
 		      ("MESA_LOADER_DRIVER_OVERRIDE" . "radeonsi")))
 
@@ -450,6 +456,7 @@
 		    home-files-service-type
 		    (list 
 		     `(".local/share/applications/google-chrome.desktop" ,(local-file "chrome/google-chrome-vulkan.desktop"))
+		     `(".local/share/applications/retroarch.desktop" ,(local-file "retroarch/retroarch.desktop"))
 		     `(".config/zathura/zathurarc" ,(local-file "zathura/zathurarc"))
 		     `(".config/xdg-desktop-portal/portals.conf" ,(local-file "xdg/portals.conf"))
 		     `(".config/waybar/config" ,(local-file "waybar/config"))

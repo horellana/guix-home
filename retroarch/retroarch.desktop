@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Retroarch
+GenericName=Retro games emulator
+Comment=Play games
+Exec=guix shell -m $HOME/Games/retroarch/manifest.scm -- retroarch
+Terminal=false
+Icon=retroarch
+Type=Application
+Categories=Game;Emulator;
+MimeType=x-scheme-handler/retroarch;application/x-genesis-rom;application/x-snes-rom;application/x-nintendo-nes-rom;
