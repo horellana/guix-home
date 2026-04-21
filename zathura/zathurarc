@@ -21,3 +21,6 @@ set inputbar-bg "#000000"
 set inputbar-fg "#FFFFFF"
 set notification-error-bg "#FF0000"
 set notification-error-fg "#FFFFFF"
+
+set restore-position true
+set database sqlite
