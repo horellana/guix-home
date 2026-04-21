@@ -220,6 +220,27 @@
 (use-package plantuml-mode)
 (use-package jsdoc :commands (jsdoc))
 
+(use-package scheme
+  :ensure nil ;; Built-in
+  :hook
+  (scheme-mode . smartparens-mode)
+  (scheme-mode . font-lock-mode))
+
+(use-package emacs-guix
+  :hook 
+  (scheme-mode . guix-prettify-mode)
+  :config
+  (setq guix-directory "~/.config/guix/current"))
+
+(use-package arei
+  :disabled t
+  :ensure t)
+
+(use-package dumb-jump
+  :ensure t
+  :config (progn
+	   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)))
+
 (use-package geiser
   :hook (scheme-mode . geiser-mode)
   :config
@@ -236,25 +257,12 @@
   (add-to-list 'geiser-guile-load-path 
 	       "~/.config/guix/current/lib/guile/3.0/site-ccache"))
 
-(use-package scheme
-  :ensure nil ;; Built-in
-  :hook
-  (scheme-mode . smartparens-mode)
-  (scheme-mode . font-lock-mode))
-
-(use-package emacs-guix
-  :hook 
-  (scheme-mode . guix-prettify-mode)
-  :config
-  (setq guix-directory "~/.config/guix/current"))
-
 (use-package flycheck-guile
-  :after (flycheck geiser-guile)
+  :after flycheck
   :config
   (setq flycheck-guile-library-path 
-        (append geiser-guile-load-path
-                '("~/.config/guix/current/share/guile/site/3.0"
-                  "~/.config/guix/current/lib/guile/3.0/site-ccache"))))
+        '("~/.config/guix/current/share/guile/site/3.0"
+          "~/.config/guix/current/lib/guile/3.0/site-ccache")))
 
 (eval-after-load "org"
   '(progn
@@ -287,7 +295,7 @@
 (setq frame-resize-pixelwise t)
 (add-hook 'window-setup-hook #'toggle-frame-maximized)
 (add-to-list 'default-frame-alist '(undecorated . t))
-(set-frame-font "Noto Sans Mono Medium 20" nil t)
+(set-frame-font "Noto Sans Mono Medium 18" nil t)
 
 (custom-set-faces
 '(flymake-note    ((t (:underline (:style line :color "#00aa00"))))) 
@@ -311,7 +319,7 @@
     (set-frame-parameter
      nil 'alpha-background
      (if (or (not alpha) (= alpha 100))
-	 80
+	 95
        100))))
 
 (horellana/toggle-frame-transparency)
