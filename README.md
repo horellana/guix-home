@@ -51,7 +51,7 @@ This will:
 - **Automated Wallpapers**: An `mcron` job fetches 4K wallpapers from Reddit and rotates them periodically.
 - **Lock Screen & Idle Management**: Managed by `swayidle` through Shepherd. Automatically locks the screen with a random wallpaper from the 4K collection after 5 minutes of inactivity.
 - **Gemini AI Integration**: Includes a `gemini` bash alias to quickly spawn a Gemini CLI environment using `guix shell`.
-- **VPN Controls**: Dedicated aliases (`warp-on`, `warp-off`, `warp-status`) for managing Cloudflare Warp VPN connections via WireGuard.
+- **VPN Controls**: Dedicated aliases (`warp-on`, `warp-off`, `warp-status`) for managing Cloudflare Warp VPN connections via WireGuard, complemented by a Waybar indicator that shows connection status and the VPN IP address when active.
 - **WirePlumber Integration**: Volume and mic controls in Sway use `wpctl` for better PipeWire compatibility.
 - **Emacs Integration**: Packages are installed via Guix, but configuration is handled via `use-package` in `init.el`. Includes a generated `guix-config.el` for store paths and Geiser for Guile development.
 - **Advanced PDF Reading**: Zathura is configured with an SQLite database to restore reading progress across sessions.
