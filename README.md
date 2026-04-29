@@ -28,6 +28,8 @@ This repository contains my personal declarative system configuration managed by
 - `waybar/`: Waybar config, styling, and scripts.
 - `emacs/`: Emacs initialization (`init.el`).
 - `foot/`, `tmux/`, `wofi/`, `gtk/`, `kanshi/`, `xdg/`, `zathura/`, `retroarch/`: Configs for core tools (terminal, display manager, portals, PDF viewer, emulators).
+- `chrome/`: Custom desktop entry for Google Chrome with Vulkan rendering enabled.
+- `rtorrent/`: rTorrent BitTorrent client configuration.
 - `gnupg/`: GPG configuration.
 
 ## Installation
@@ -47,6 +49,9 @@ This will:
 
 - **Modern Graphics**: Uses Vulkan as the default renderer (`WLR_RENDERER=vulkan`) for improved performance on Wayland.
 - **Automated Wallpapers**: An `mcron` job fetches 4K wallpapers from Reddit and rotates them periodically.
+- **Lock Screen & Idle Management**: Managed by `swayidle` through Shepherd. Automatically locks the screen with a random wallpaper from the 4K collection after 5 minutes of inactivity.
+- **Gemini AI Integration**: Includes a `gemini` bash alias to quickly spawn a Gemini CLI environment using `guix shell`.
+- **VPN Controls**: Dedicated aliases (`warp-on`, `warp-off`, `warp-status`) for managing Cloudflare Warp VPN connections via WireGuard.
 - **WirePlumber Integration**: Volume and mic controls in Sway use `wpctl` for better PipeWire compatibility.
 - **Emacs Integration**: Packages are installed via Guix, but configuration is handled via `use-package` in `init.el`. Includes a generated `guix-config.el` for store paths and Geiser for Guile development.
 - **Advanced PDF Reading**: Zathura is configured with an SQLite database to restore reading progress across sessions.
