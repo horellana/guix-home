@@ -3,7 +3,7 @@
 window {
     margin: 0px;
     border: 2px solid gray; /* Stark white border for high contrast */
-    background-color: rgba(0, 0, 0, 0.7); /* Pure black background */
+    background-color: rgba(0, 0, 0, 0.8); /* Pure black background */
     border-radius: 0px;        /* Sharp corners usually fit high-contrast better */
     font-family: monospace;
     font-size: 16px;
@@ -12,7 +12,7 @@ window {
 #input {
     margin: 5px;
     border: 1px solid gray; /* White border to define input box */
-    background-color: rgba(0, 0, 0, 0.7); /* Pure black input */
+    background-color: rgba(0, 0, 0, 0.8); /* Pure black input */
     color: #ffffff;            /* White text */
     border-radius: 0px;
     padding: 5px;
