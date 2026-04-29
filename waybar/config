@@ -5,7 +5,7 @@
     "spacing": 4,
     "modules-left": ["sway/workspaces", "sway/mode"],
     "modules-center": [],
-    "modules-right": ["idle_inhibitor", "custom/weather", "pulseaudio", "pulseaudio#mic", "cpu", "custom/gpu", "memory", "disk", "network", "custom/speedtest", "battery", "clock", "tray"],
+    "modules-right": ["idle_inhibitor", "custom/weather", "pulseaudio", "pulseaudio#mic", "cpu", "custom/gpu", "memory", "disk", "custom/warp", "network", "custom/speedtest", "battery", "clock", "tray"],
 
     "sway/workspaces": {
         "disable-scroll": true,
@@ -85,6 +85,12 @@
         "interval": 1800, 
         "on-click": "pkill -SIGRTMIN+1 waybar", 
         "signal": 1,
+        "tooltip": true
+    },
+    "custom/warp": {
+        "exec": "sh ~/.config/waybar/scripts/warp.sh",
+        "return-type": "json",
+        "interval": 5,
         "tooltip": true
     },
     "network": {

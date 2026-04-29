@@ -45,7 +45,7 @@ window#waybar {
 
 /* --- RIGHT MODULES --- */
 
-#clock, #battery, #backlight, #cpu, #custom-gpu, #memory, #disk, #custom-weather, #network, #pulseaudio, #mic, #tray, #mode {
+#clock, #battery, #backlight, #cpu, #custom-gpu, #memory, #disk, #custom-weather, #custom-warp, #network, #pulseaudio, #mic, #tray, #mode {
     padding: 0 10px;
     margin: 0 0;
     color: #ffffff;
@@ -64,8 +64,17 @@ window#waybar {
 #pulseaudio:hover,
 #mic:hover,
 #custom-weather:hover,
+#custom-warp:hover,
 #backlight:hover {
     background-color: #1a1a1a;
+}
+
+#custom-warp.connected {
+    color: #a6e3a1;
+}
+
+#custom-warp.disconnected {
+    color: #888888;
 }
 
 #pulseaudio.muted,
