@@ -35,6 +35,7 @@
  (gnu packages ssh)
  (gnu packages image-viewers)
  (gnu packages pulseaudio)
+ (gnu packages bittorrent)
  (guix gexp)
  (guix inferior)
  
@@ -141,6 +142,8 @@
 
 (define my-utils-packages
   (list
+   p7zip
+   rtorrent
    nautilus
    imv
    ripgrep
@@ -455,6 +458,7 @@
     (simple-service 'dotfiles
 		    home-files-service-type
 		    (list 
+		     `(".rtorrent.rc" ,(local-file "rtorrent/rtorrent.rc"))
 		     `(".local/share/applications/google-chrome.desktop" ,(local-file "chrome/google-chrome-vulkan.desktop"))
 		     `(".local/share/applications/retroarch.desktop" ,(local-file "retroarch/retroarch.desktop"))
 		     `(".config/zathura/zathurarc" ,(local-file "zathura/zathurarc"))
