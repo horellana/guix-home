@@ -36,6 +36,8 @@
  (gnu packages image-viewers)
  (gnu packages pulseaudio)
  (gnu packages bittorrent)
+ (gnu packages rsync)
+ (gnu packages video)
  (guix gexp)
  (guix inferior)
  
@@ -118,6 +120,7 @@
    emacs-direnv
    
    ;; Treesitter Grammars
+   tree-sitter-yaml
    tree-sitter-python
    tree-sitter-go
    tree-sitter-javascript
@@ -136,12 +139,15 @@
 	font-google-noto-emoji))
 
 (define my-dev-packages
-  (list man-pages
+  (list gnu-make
+	man-pages
 	man-pages-posix
-	direnv))
+	direnv
+	git))
 
 (define my-utils-packages
   (list
+   rsync
    p7zip
    rtorrent
    nautilus
@@ -182,6 +188,8 @@
 
 (define my-other-packages
   (list
+   vlc
+
    xeyes
    google-chrome-stable
 
