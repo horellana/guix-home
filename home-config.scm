@@ -69,7 +69,7 @@
  (nongnu packages mozilla)
  (nongnu packages chrome)
 
- (my-packages reddit-image-downloader)
+ (my-scripts download-wallpapers)
  (my-scripts set-wallpaper)
  (gnu services mcron)
  (gnu home services mcron))
@@ -167,7 +167,7 @@
    zathura-pdf-mupdf
    unzip
    random-wallpaper
-   reddit-image-downloader))
+   download-wallpapers))
 
 (define my-wm-packages
   (list
@@ -399,16 +399,10 @@
 		   "random-wallpaper-job")
 		#~(job
 		   '(next-minute (range 0 24 12))
-		   (string-append 
+		   (string-append
 		    "export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt; "
 		    "export SSL_CERT_DIR=/etc/ssl/certs; "
-		    "mkdir -p /home/hector/images/wallpapers && "
-		    #$reddit-image-downloader "/bin/reddit-image-downloader"
-		    " -min-res=4k"
-		    " -sort=top"
-		    " -time=week"
-		    " -folder=/home/hector/images/wallpapers"
-		    " subreddits=ImaginaryLandscapes,ImaginaryCityscapes,ImaginaryStarscapes,CityPorn,SkyPorn,WaterPorn,WidescreenWallpaper,MinimalWallpaper,Amoledbackground,wallpapers,wallpaper,WQHD_Wallpaper,EarthPorn,spaceporn,lakeporn"
+		    #$download-wallpapers-script
 		    " 2>&1")
 		   "reddit-wallpaper-job")))))
 
