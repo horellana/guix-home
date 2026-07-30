@@ -54,6 +54,7 @@
  (gnu packages qt)
  (gnu packages uml)
  (gnu packages web)
+ (gnu packages python)
  (gnu packages file)
  (gnu packages gnupg)
  (gnu packages tree-sitter)
@@ -70,6 +71,8 @@
  (nongnu packages chrome)
 
  (my-scripts download-wallpapers)
+ (my-packages claude-code)
+ (my-packages governor)
  (my-scripts set-wallpaper)
  (gnu services mcron)
  (gnu home services mcron))
@@ -143,6 +146,7 @@
 	man-pages
 	man-pages-posix
 	direnv
+	claude-code
 	git))
 
 (define my-utils-packages
@@ -420,6 +424,16 @@
 	       (list 
 		(plain-file "direnv-setup"
                         "eval \"$(direnv hook bash)\"")
+		(plain-file "claude-code-setup"
+			    (string-append
+			     "export DISABLE_AUTOUPDATER=1\n"
+			     ;; Claude revisa su ruta nativa ~/.local/bin/claude al
+			     ;; arrancar; la apuntamos al wrapper de Guix para callar
+			     ;; los avisos del 'doctor' sin que se autogestione.
+			     "if [ ! -L \"$HOME/.local/bin/claude\" ]; then\n"
+			     "  mkdir -p \"$HOME/.local/bin\"\n"
+			     "  ln -sf \"$HOME/.guix-home/profile/bin/claude\" \"$HOME/.local/bin/claude\"\n"
+			     "fi\n"))
 		(plain-file "gpg-agent-setup" 
 			    (string-append
 			     "export GPG_TTY=$(tty)\n"
@@ -443,6 +457,16 @@
     (simple-service 'guix-emacs-config
 		    home-files-service-type
 		    (list `(".emacs.d/guix-config.el" ,guix-emacs-config)))
+
+    ;; Registra el plugin Governor en ~/.claude/settings.json apuntando al
+    ;; marketplace del store.  Idempotente: se re-ejecuta en cada reconfigure
+    ;; para actualizar la ruta del store cuando cambia la versión de governor.
+    (simple-service 'governor-claude-plugin
+		    home-activation-service-type
+		    #~(system*
+		       #$(file-append python "/bin/python3")
+		       #$(local-file "scripts/governor-setup.py")
+		       #$(file-append governor "/share/governor")))
 
     (simple-service 'wayland-env-vars-service
 		    home-environment-variables-service-type
