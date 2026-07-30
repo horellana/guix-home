@@ -1,3 +1,6 @@
+;; gamescope -w 1920 -h 1080 -W 3840 -H 2160 -f -F fsr -- %command%
+
+
 (add-to-load-path "/home/hector/guix-packages")
 
 (use-modules
@@ -414,7 +417,8 @@
 	     (home-bash-configuration
 	      (guix-defaults? #t)
 	      (aliases
-               '(("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
+               '(("steam" . "guix shell -m ~/steam-guix/manifest.scm -f ~/steam-guix/gamescope.scm -- env XKB_DEFAULT_LAYOUT=latam gamescope --backend wayland -w 1920 -h 1080 -W 3840 -H 2160 -F fsr -f -- steam")
+		 ("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
                  ("warp-off"    . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick down ./wgcf-profile.conf)")
                  ("warp-status" . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg show)")
 		 ("guix-system-update" . "nice -n 20 sudo guix pull && nice -n 20 sudo guix system reconfigure /etc/config.scm")
@@ -486,6 +490,7 @@
 		    (list 
 		     `(".rtorrent.rc" ,(local-file "rtorrent/rtorrent.rc"))
 		     `(".local/share/applications/google-chrome.desktop" ,(local-file "chrome/google-chrome-vulkan.desktop"))
+		     `(".local/share/applications/steam-guix.desktop" ,(local-file "steam/steam.desktop"))
 		     `(".local/share/applications/retroarch.desktop" ,(local-file "retroarch/retroarch.desktop"))
 		     `(".config/zathura/zathurarc" ,(local-file "zathura/zathurarc"))
 		     `(".config/xdg-desktop-portal/portals.conf" ,(local-file "xdg/portals.conf"))

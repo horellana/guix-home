@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Steam (Guix shell)
+GenericName=Game Launcher
+Comment=Plataforma de videojuegos Steam (nonguix, FHS container)
+Exec=guix shell -m /home/hector/steam-guix/manifest.scm  /home/hector/steam-guix/gamescope.scm -- steam %U
+Terminal=false
+Icon=steam
+Type=Application
+Categories=Game;
+MimeType=x-scheme-handler/steam;
