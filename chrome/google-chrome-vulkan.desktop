@@ -3,7 +3,7 @@ Version=1.0
 Name=Google Chrome (Wayland/Vulkan)
 GenericName=Web Browser
 Comment=Access the Internet
-Exec=guix shell mesa libglvnd libdrm vulkan-loader -- google-chrome --ozone-platform=wayland --use-angle=vulkan --use-gl=angle --ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy --disable-gpu-driver-bug-workarounds %U
+Exec=guix shell mesa libglvnd libdrm vulkan-loader -- google-chrome --disk-cache-dir=/tmp/chrome-cache --ozone-platform=wayland --use-angle=vulkan --use-gl=angle --ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy %U
 Terminal=false
 Icon=google-chrome
 Type=Application
