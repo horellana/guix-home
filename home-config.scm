@@ -455,7 +455,14 @@
 	      (extra-content "no-grab\n")))
 
     (service home-openssh-service-type
-	     (home-openssh-configuration))
+	     (home-openssh-configuration
+	     (hosts
+	       (list
+		(openssh-host
+		 (name "rpi 192.168.100.17")
+		 (host-name "192.168.100.17")
+		 (user "hector")
+		 (identity-file "~/.ssh/id_rpi"))))))
 
     (simple-service 'guix-emacs-config
 		    home-files-service-type
