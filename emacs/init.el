@@ -13,6 +13,15 @@
 
 (require 'use-package)
 
+;; Tree-sitter grammars are installed via Guix into the home profile; tell
+;; treesit where to find them so *-ts-mode can load them when the mode starts.
+(add-to-list 'treesit-extra-load-path
+	     (expand-file-name "~/.guix-home/profile/lib/tree-sitter/"))
+
+;; rust-ts-mode only registers .rs in auto-mode-alist at load time, and that form
+;; is not autoloaded, so register it explicitly here.
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+
 (use-package envrc
   :config
   (envrc-global-mode))
@@ -183,7 +192,23 @@
    (flymake-mode . flymake-flycheck-auto)))
 
 (use-package eglot
- :commands (eglot eglot-ensure))
+  :commands (eglot eglot-ensure)
+  :config
+  ;; Crates de Rust anidados dentro de un repo más grande (p. ej. este mismo,
+  ;; scripts/wallpapers-downloader): project.el usa la raíz git, así que
+  ;; rust-analyzer recibe esa raíz, no encuentra el Cargo.toml y falla la
+  ;; discovery del workspace. Se lo indicamos por initializationOptions
+  ;; (linkedProjects), detectando el Cargo.toml más cercano al buffer.
+  (defun horellana/rust-analyzer-init-options (&optional _server)
+    (when-let* ((cargo (locate-dominating-file
+                        (or (buffer-file-name) default-directory) "Cargo.toml"))
+                (proj (project-current))
+                (root (project-root proj)))
+      `(:linkedProjects
+        [,(file-relative-name (expand-file-name "Cargo.toml" cargo) root)])))
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) . ("rust-analyzer"
+                  :initializationOptions horellana/rust-analyzer-init-options))))
 
 (use-package eldoc-box :after eldoc :bind (("C-c K" . eldoc-box-help-at-point)))
 (use-package yasnippet :config (yas-global-mode 1))
