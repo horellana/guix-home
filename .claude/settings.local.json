@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Read(//home/hector/**)",
+      "Read(//home/hector/guix-packages/**)",
+      "Read(//gnu/store/1sbkaxg5r5ryn3m6jmqbkgsmi7a2zir3-glibc-for-fhs-2.41/lib/**)"
+    ]
+  }
+}
