@@ -414,12 +414,11 @@
 	     (home-bash-configuration
 	      (guix-defaults? #t)
 	      (aliases
-               '(("gemini" . "guix shell node -- npx @google/gemini-cli")
-		 ("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
+               '(("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
                  ("warp-off"    . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick down ./wgcf-profile.conf)")
                  ("warp-status" . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg show)")
-		 ("guix-system-update" . "warp-on && nice -n 20 sudo guix pull && nice -n 20 sudo guix system reconfigure /etc/config.scm; warp-off")
-		 ("guix-home-update" . "warp-on && nice -n 20 guix pull && nice -n 20 guix home reconfigure $HOME/.config/guix-home/home-config.scm; warp-off")))
+		 ("guix-system-update" . "nice -n 20 sudo guix pull && nice -n 20 sudo guix system reconfigure /etc/config.scm")
+		 ("guix-home-update" . "nice -n 20 guix pull && nice -n 20 guix home reconfigure $HOME/.config/guix-home/home-config.scm")))
 	      (bashrc 
 	       (list 
 		(plain-file "direnv-setup"
