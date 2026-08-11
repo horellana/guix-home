@@ -367,6 +367,11 @@
 
     (service home-dbus-service-type)
 
+    (simple-service 'steam-tray-icon
+                home-xdg-data-files-service-type
+                (list (list "icons/hicolor/48x48/apps/steam_tray_mono.png"
+                            (local-file "steam/steam_tray_mono.png"))))
+    
     (simple-service 'pipewire-services
 		    home-shepherd-service-type
 		    (list
