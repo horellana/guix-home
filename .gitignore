@@ -3,4 +3,4 @@
 
 # Artefactos de compilación de los proyectos Rust en scripts/
 target/
-src/rust_out
+**/src/rust_out
