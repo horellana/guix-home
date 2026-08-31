@@ -199,6 +199,7 @@
    google-chrome-stable
 
    mesa 
+   pipewire
    wireplumber
    
    playerctl     
