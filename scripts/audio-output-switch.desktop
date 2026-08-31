@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Salida de audio
+GenericName=Audio Output Switcher
+Comment=Elige un sink y mueve alli todo el audio en reproduccion
+Exec=/home/hector/.local/bin/audio-output-switch
+Terminal=false
+Icon=audio-headphones
+Type=Application
+Categories=AudioVideo;Audio;Settings;

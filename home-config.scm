@@ -423,6 +423,7 @@
 		 ("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
                  ("warp-off"    . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick down ./wgcf-profile.conf)")
                  ("warp-status" . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg show)")
+		 ("audio-output" . "$HOME/.local/bin/audio-output-switch")
 		 ("guix-system-update" . "nice -n 20 sudo guix pull && nice -n 20 sudo guix system reconfigure /etc/config.scm")
 		 ("guix-home-update" . "nice -n 20 guix pull && nice -n 20 guix home reconfigure $HOME/.config/guix-home/home-config.scm")))
 	      (bashrc 
@@ -501,6 +502,7 @@
 		     `(".local/share/applications/google-chrome.desktop" ,(local-file "chrome/google-chrome-vulkan.desktop"))
 		     `(".local/share/applications/steam-guix.desktop" ,(local-file "steam/steam.desktop"))
 		     `(".local/share/applications/retroarch.desktop" ,(local-file "retroarch/retroarch.desktop"))
+		     `(".local/share/applications/audio-output-switch.desktop" ,(local-file "scripts/audio-output-switch.desktop"))
 		     `(".config/zathura/zathurarc" ,(local-file "zathura/zathurarc"))
 		     `(".config/xdg-desktop-portal/portals.conf" ,(local-file "xdg/portals.conf"))
 		     `(".config/waybar/config" ,(local-file "waybar/config"))
@@ -509,6 +511,7 @@
 		     `(".config/waybar/scripts/warp.sh" ,(local-file "waybar/scripts/warp.sh"))
 		     `(".config/waybar/scripts/speedtest.sh" ,(local-file "waybar/scripts/speedtest.sh"))
 		     `(".config/wofi/style.css" ,(local-file "wofi/style.css"))
+		     `(".local/bin/audio-output-switch" ,(local-file "scripts/audio-output-switch.sh" #:recursive? #t))
 		     `(".tmux.conf" ,(local-file "tmux/tmux.conf"))
 		     `(".emacs.d/init.el" ,(local-file "emacs/init.el"))
 		     `(".config/foot/foot.ini" ,(local-file "foot/foot.ini"))
