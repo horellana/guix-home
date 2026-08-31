@@ -275,18 +275,27 @@
          (let ((state (random-state-from-platform)))
            (list-ref lst (random (length lst) state))))
 
+       (define (ensure-dir dir)
+         (unless (file-exists? dir)
+           (mkdir dir #o755)))
+
        (let* ((home (getenv "HOME"))
               (wall-dir (string-append home "/images/wallpapers/4k"))
+              (log-dir (string-append home "/.local/state"))
               (outputs (get-outputs))
               (wallpapers (get-wallpapers wall-dir)))
 
-         (with-output-to-file "/tmp/swaylock.log"
+         (ensure-dir (string-append home "/.local"))
+         (ensure-dir log-dir)
+
+         (with-output-to-port (open-file (string-append log-dir "/random-wallpaper-lock.log") "a")
            (lambda ()
              (display (string-append "Locking at " (strftime "%c" (localtime (current-time))) "\n"))
              
              (cond
               ((null? wallpapers)
                (display "WARNING: No wallpapers found. Using black fallback.\n")
+               (force-output)
                (execl swaylock "swaylock" "-f" "-c" "000000"))
 
               (else
@@ -297,8 +306,8 @@
                                  '()
                                  outputs)))
 
-                 (apply execl swaylock "swaylock" "-f" args))))
-             #:append #t))))))
+                 (force-output)
+                 (apply execl swaylock "swaylock" "-f" args))))))))))
 
 (define my-swayidle-service
   (service home-shepherd-service-type
