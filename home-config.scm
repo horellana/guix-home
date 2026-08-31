@@ -35,6 +35,7 @@
  (gnu packages ssh)
  (gnu packages image-viewers)
  (gnu packages pulseaudio)
+ (gnu packages networking)
  (gnu packages bittorrent)
  (gnu packages rsync)
  (gnu packages video)
@@ -205,6 +206,7 @@
    
    polkit-gnome
    network-manager-applet
+   blueman
    gnome-themes-extra      
    gsettings-desktop-schemas
    
