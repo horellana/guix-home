@@ -72,7 +72,6 @@
 
  (my-scripts download-wallpapers)
  (my-packages claude-code)
- (my-packages opencode)
  (my-packages governor)
  (my-scripts set-wallpaper)
  (gnu services mcron)
@@ -148,7 +147,6 @@
 	man-pages-posix
 	direnv
 	claude-code
-	opencode
 	git))
 
 (define my-utils-packages
