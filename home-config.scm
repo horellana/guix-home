@@ -1,6 +1,3 @@
-;; gamescope -w 1920 -h 1080 -W 3840 -H 2160 -f -F fsr -- %command%
-
-
 (add-to-load-path "/home/hector/guix-packages")
 
 (use-modules
@@ -44,7 +41,7 @@
  (guix gexp)
  (guix inferior)
  
- (gnu packages wm)           
+ (gnu packages window-management)
  (gnu packages xdisorg)      
  (gnu packages fonts)
 
