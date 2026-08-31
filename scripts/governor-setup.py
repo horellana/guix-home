@@ -46,6 +46,15 @@ if not isinstance(markets, dict):
 markets["governor"] = {"source": {"source": "directory", "path": market}}
 settings["extraKnownMarketplaces"] = markets
 
+# Statusline: la pongo si no hay ninguna, y refresco la ruta del store si la
+# que hay ya es la de Governor.
+statusline = f'"{market}/bin/governor-statusline"'
+current = settings.get("statusLine")
+if not isinstance(current, dict) or "governor-statusline" in str(
+    current.get("command", "")
+):
+    settings["statusLine"] = {"type": "command", "command": statusline}
+
 settings_path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
 
 # Modo por defecto; no piso un modo ya elegido por el usuario.
