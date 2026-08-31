@@ -422,8 +422,7 @@
 	     (home-bash-configuration
 	      (guix-defaults? #t)
 	      (aliases
-               '(("steam" . "guix shell -m ~/steam-guix/manifest.scm -f ~/steam-guix/gamescope.scm -- env XKB_DEFAULT_LAYOUT=latam gamescope --backend wayland -w 1920 -h 1080 -W 3840 -H 2160 -F fsr -f -- steam")
-		 ("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
+               '(("warp-on"     . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick up ./wgcf-profile.conf)")
                  ("warp-off"    . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg-quick down ./wgcf-profile.conf)")
                  ("warp-status" . "(cd $HOME/Projects/warp; guix shell --substitute-urls='https://ci.guix.gnu.org https://bordeaux.guix.gnu.org' wireguard-tools openresolv -- sudo wg show)")
 		 ("audio-output" . "$HOME/.local/bin/audio-output-switch")
