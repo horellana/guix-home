@@ -419,7 +419,7 @@
 		   #$random-wallpaper-script
 		   "random-wallpaper-job")
 		#~(job
-		   '(next-minute (range 0 24 12))
+		   '(next-hour)
 		   (string-append
 		    "export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt; "
 		    "export SSL_CERT_DIR=/etc/ssl/certs; "
