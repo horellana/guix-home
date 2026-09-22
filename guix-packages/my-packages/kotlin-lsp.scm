@@ -1,8 +1,7 @@
 ;;; Paquete Guix para el Kotlin LSP oficial de JetBrains (distribución binaria).
 ;;;
-;;; DESTINO: copiar/mover este archivo a
-;;;   /home/hector/guix-packages/my-packages/kotlin-lsp.scm
-;;; (el directorio que `home-config.scm` añade con add-to-load-path).
+;;; Vive en guix-packages/my-packages/ de este mismo repo, que es el directorio
+;;; que `home-config.scm` añade con add-to-load-path.  No hay copia en $HOME.
 ;;;
 ;;; NOTAS DE EMPAQUETADO (verificadas ejecutando el servidor, no supuestas):
 ;;;

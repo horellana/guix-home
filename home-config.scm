@@ -1,4 +1,9 @@
-(add-to-load-path "/home/hector/guix-packages")
+;; Los módulos propios ((my-packages ...), (my-scripts ...)) viven en
+;; guix-packages/ dentro de este mismo repo, así que la ruta se deriva del
+;; fichero: no hay copia que sincronizar en $HOME ni ruta absoluta que romper
+;; si el repo se mueve.
+(add-to-load-path
+ (string-append (dirname (canonicalize-path (current-filename))) "/guix-packages"))
 
 (use-modules
  (srfi srfi-1)

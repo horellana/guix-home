@@ -1,8 +1,7 @@
 ;;; Paquete Guix para kotlin-ts-mode (major mode de Kotlin basado en treesit).
 ;;;
-;;; DESTINO: copiar/mover este archivo a
-;;;   /home/hector/guix-packages/my-packages/kotlin-ts-mode.scm
-;;; (el directorio que `home-config.scm` añade con add-to-load-path).
+;;; Vive en guix-packages/my-packages/ de este mismo repo, que es el directorio
+;;; que `home-config.scm` añade con add-to-load-path.  No hay copia en $HOME.
 ;;;
 ;;; El upstream vive en GitLab, no en GitHub: el repo bricka/emacs-kotlin-ts-mode
 ;;; de GitHub da 404 y el único espejo (emacsmirror/kotlin-ts-mode) es de solo

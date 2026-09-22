@@ -1,8 +1,7 @@
 ;;; Paquete Guix para opencode (binario nativo Bun distribuido en npm).
 ;;;
-;;; DESTINO: mover/copiar este archivo a
-;;;   /home/hector/guix-packages/my-packages/opencode.scm
-;;; (el directorio que `home-config.scm` añade con add-to-load-path).
+;;; Vive en guix-packages/my-packages/ de este mismo repo, que es el directorio
+;;; que `home-config.scm` añade con add-to-load-path.  No hay copia en $HOME.
 ;;;
 ;;; NOTA: igual que claude-code, el binario lo compila Bun y `patchelf` lo
 ;;; rompe, porque al reescribir el ELF se invalidan offsets que Bun lleva

@@ -15,11 +15,7 @@ This repository contains my personal declarative system configuration managed by
 ## Prerequisites
 
 1.  **GNU Guix**: Ensure Guix is installed on your system.
-2.  **Custom Channels/Packages**: This configuration assumes the existence of a local package collection at `~/guix-packages`. It specifically looks for:
-    - `(my-scripts set-wallpaper)`
-    - `(my-packages claude-code)`, `(my-packages governor)`
-
-    You may need to adjust the `add-to-load-path` in `home-config.scm` if your custom packages are located elsewhere.
+2.  **Custom Packages**: Self-contained. `home-config.scm` adds this repository's own `guix-packages/` directory to the Guile load path, which provides `(my-packages claude-code)`, `(my-packages governor)`, `(my-packages kotlin-lsp)`, `(my-packages kotlin-ts-mode)`, `(my-packages opencode)` and `(my-scripts set-wallpaper)`.
 
 ## Directory Structure
 

@@ -33,12 +33,12 @@ Consequences when editing:
 
 ## External dependencies (config will not evaluate without them)
 
-- `add-to-load-path "/home/hector/guix-packages"` — local channel providing `(my-scripts set-wallpaper)` (exports `random-wallpaper` / `random-wallpaper-script`), `(my-packages claude-code)` and `(my-packages governor)`. Missing this path = evaluation failure.
+- None outside this repo: `home-config.scm` adds its own `guix-packages/` directory to the load path (derived from `(current-filename)`, so it works from any cwd). That directory holds `my-packages/` (`claude-code`, `governor`, `kotlin-lsp`, `kotlin-ts-mode`, `opencode`) and `my-scripts/` (`set-wallpaper`, exporting `random-wallpaper` / `random-wallpaper-script`). The old `~/guix-packages` copy is no longer read.
 - **nonguix channel** is declared via `home-channels-service-type` and is required for `google-chrome-stable`, `(nongnu packages mozilla)` and the `claude-code` package (it uses `(nonguix licenses)`). Channel changes only take effect after a `guix pull`, not just a home reconfigure.
 
-`wallpaper-downloader` is the counter-example: it is a `package` defined inline in `home-config.scm` whose `source` is `(local-file "scripts/wallpaper-downloader" #:recursive? #t)`, so source and consumer stay in this repo and there is no copy to keep in sync. Prefer this shape for code that only this config uses.
+Package definitions live in `guix-packages/my-packages/` and Guix reads them from there directly. Each file's header comment documents how to bump the version/hash; for `claude-code` use `scripts/update-claude-code.sh` instead of editing by hand.
 
-`claude-code.scm` and `governor.scm` live at the repo root as the *authoritative sources* of those two packages, but Guix does not read them from here — they must be copied to `/home/hector/guix-packages/my-packages/`. Each file's header comment documents its destination and how to bump the version/hash.
+`wallpaper-downloader` is the other shape: a `package` defined inline in `home-config.scm` whose `source` is `(local-file "scripts/wallpaper-downloader" #:recursive? #t)`. Prefer that one for code that only this config uses; `guix-packages/my-packages/` is for definitions that wrap something external (a npm tarball, a JetBrains archive, an upstream git repo).
 
 ## Package organization
 

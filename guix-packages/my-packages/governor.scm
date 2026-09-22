@@ -1,8 +1,7 @@
 ;;; Paquete Guix para el plugin Governor de Claude Code.
 ;;;
-;;; DESTINO: copiar/mover este archivo a
-;;;   /home/hector/guix-packages/my-packages/governor.scm
-;;; (el directorio que `home-config.scm` añade con add-to-load-path).
+;;; Vive en guix-packages/my-packages/ de este mismo repo, que es el directorio
+;;; que `home-config.scm` añade con add-to-load-path.  No hay copia en $HOME.
 ;;;
 ;;; Governor son solo scripts (Python de stdlib + shell); se copian tal cual al
 ;;; store bajo share/governor.  El registro en ~/.claude/settings.json lo hace
@@ -12,7 +11,7 @@
 ;;; Para actualizar de versión:
 ;;;   1. cambia (version ...) al nuevo tag (vX.Y.Z).
 ;;;   2. obtén el nuevo hash del checkout:
-;;;        guix hash -rx $(guix build -S governor -L /home/hector/guix-packages)
+;;;        guix hash -rx $(guix build -S governor -L ~/.config/guix-home/guix-packages)
 ;;;      o deja fallar el build y pega el hash que reporta en (base32 ...).
 
 (define-module (my-packages governor)
