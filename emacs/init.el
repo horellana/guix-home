@@ -191,8 +191,20 @@
   ((prog-mode . flymake-mode)
    (flymake-mode . flymake-flycheck-auto)))
 
+;; Los entornos generados por la skill guix-dev-env viven en subcarpetas de un
+;; repo mayor (p. ej. scripts/wallpaper-downloader dentro de guix-home).
+;; project.el devolvería la raíz git, así que los LSP arrancan ahí y no ven el
+;; pyproject.toml / Cargo.toml / go.mod del subproyecto. Como esa skill siempre
+;; escribe un manifest.scm, lo usamos como marca de raíz de proyecto.
+(with-eval-after-load 'project
+  (defun horellana/project-find-guix-shell (dir)
+    (when-let* ((root (locate-dominating-file dir "manifest.scm")))
+      (cons 'transient (expand-file-name root))))
+  (add-to-list 'project-find-functions #'horellana/project-find-guix-shell))
+
 (use-package eglot
   :commands (eglot eglot-ensure)
+  :hook (python-mode . eglot-ensure)
   :config
   ;; Crates de Rust anidados dentro de un repo más grande (p. ej. este mismo,
   ;; scripts/wallpapers-downloader): project.el usa la raíz git, así que
@@ -208,7 +220,11 @@
         [,(file-relative-name (expand-file-name "Cargo.toml" cargo) root)])))
   (add-to-list 'eglot-server-programs
                '((rust-ts-mode rust-mode) . ("rust-analyzer"
-                  :initializationOptions horellana/rust-analyzer-init-options))))
+                  :initializationOptions horellana/rust-analyzer-init-options)))
+  ;; eglot ofrece pylsp y ruff para Python; ruff-server solo hace lint/formato.
+  ;; Fijamos pylsp (jedi -> completado) y los diagnósticos de ruff llegan por su
+  ;; plugin python-lsp-ruff.
+  (add-to-list 'eglot-server-programs '((python-mode python-ts-mode) . ("pylsp"))))
 
 (use-package eldoc-box :after eldoc :bind (("C-c K" . eldoc-box-help-at-point)))
 (use-package yasnippet :config (yas-global-mode 1))

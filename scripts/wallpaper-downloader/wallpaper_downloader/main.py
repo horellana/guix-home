@@ -1,7 +1,8 @@
-import logging
-
+import sys
 import argparse
-import json
+import hashlib
+import logging
+import os
 
 import requests
 
@@ -18,6 +19,22 @@ CONTENT_FILTER = {
 
 def get_extension(mimetype):
     return "." + mimetype.split("/")[1]
+
+
+def get_wallpaper_hashes(root_path):
+    dirs = os.scandir(root_path)
+    dirs = (entry for entry in dirs if entry.is_file())
+
+    result = set()
+
+    for file in dirs:
+        with open(file) as fh:
+            content = fh.readall()
+            hashed = hashlib.md5(content)
+            result.add(hashed)
+
+    return result
+
 
 def search_wallpapers(logger):
     response = requests.get(BASE_URL + "?categories=111&purity=100&atleast=3840x2160&ratios=16x9&sorting=date_added")
@@ -42,11 +59,20 @@ def main():
     logger = logging.getLogger('spam_application')
     logger.setLevel(logging.DEBUG)
 
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-o", "--output-path")
+    args = parser.parse_args()
+
+    if not args.output_path:
+        print({ "action": "MISSING_COMMAND_LINE_ARG", "arg": "--output-path"}, file=sys.stderr)
+        return 1
+
     wallpapers = search_wallpapers(logger)
 
     for wallpaper in wallpapers:
-        download_wallpaper(wallpaper["url"], "./test_output/" + wallpaper["file_name"], logger)
+        download_wallpaper(wallpaper["url"],  args.output_path + wallpaper["file_name"], logger)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -16,8 +16,8 @@ This repository contains my personal declarative system configuration managed by
 
 1.  **GNU Guix**: Ensure Guix is installed on your system.
 2.  **Custom Channels/Packages**: This configuration assumes the existence of a local package collection at `~/guix-packages`. It specifically looks for:
-    - `(my-packages reddit-image-downloader)`
     - `(my-scripts set-wallpaper)`
+    - `(my-packages claude-code)`, `(my-packages governor)`
 
     You may need to adjust the `add-to-load-path` in `home-config.scm` if your custom packages are located elsewhere.
 
@@ -48,7 +48,7 @@ This will:
 ## Features
 
 - **Modern Graphics**: Uses Vulkan as the default renderer (`WLR_RENDERER=vulkan`) for improved performance on Wayland.
-- **Automated Wallpapers**: An `mcron` job fetches 4K wallpapers from Reddit and rotates them periodically.
+- **Automated Wallpapers**: Two `mcron` jobs: one fetches 4K wallpapers from the Wallhaven API (hourly), another rotates them every 15 minutes.
 - **Lock Screen & Idle Management**: Managed by `swayidle` through Shepherd. Automatically locks the screen with a random wallpaper from the 4K collection after 5 minutes of inactivity.
 - **Gemini AI Integration**: Includes a `gemini` bash alias to quickly spawn a Gemini CLI environment using `guix shell`.
 - **VPN Controls**: Dedicated aliases (`warp-on`, `warp-off`, `warp-status`) for managing Cloudflare Warp VPN connections via WireGuard, complemented by a Waybar indicator that shows connection status and the VPN IP address when active.

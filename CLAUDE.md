@@ -33,8 +33,10 @@ Consequences when editing:
 
 ## External dependencies (config will not evaluate without them)
 
-- `add-to-load-path "/home/hector/guix-packages"` — local channel providing `(my-scripts set-wallpaper)` (exports `random-wallpaper` / `random-wallpaper-script`), `(my-scripts download-wallpapers)` (exports `download-wallpapers` / `download-wallpapers-script`), `(my-packages claude-code)` and `(my-packages governor)`. Missing this path = evaluation failure.
+- `add-to-load-path "/home/hector/guix-packages"` — local channel providing `(my-scripts set-wallpaper)` (exports `random-wallpaper` / `random-wallpaper-script`), `(my-packages claude-code)` and `(my-packages governor)`. Missing this path = evaluation failure.
 - **nonguix channel** is declared via `home-channels-service-type` and is required for `google-chrome-stable`, `(nongnu packages mozilla)` and the `claude-code` package (it uses `(nonguix licenses)`). Channel changes only take effect after a `guix pull`, not just a home reconfigure.
+
+`wallpaper-downloader` is the counter-example: it is a `package` defined inline in `home-config.scm` whose `source` is `(local-file "scripts/wallpaper-downloader" #:recursive? #t)`, so source and consumer stay in this repo and there is no copy to keep in sync. Prefer this shape for code that only this config uses.
 
 `claude-code.scm` and `governor.scm` live at the repo root as the *authoritative sources* of those two packages, but Guix does not read them from here — they must be copied to `/home/hector/guix-packages/my-packages/`. Each file's header comment documents its destination and how to bump the version/hash.
 
@@ -47,7 +49,7 @@ Packages are grouped into `define`d lists (`my-dev-packages`, `my-wm-packages`, 
 Defined inline in `home-config.scm`:
 - **swayidle** (`my-swayidle-service`): a hand-rolled `home-shepherd-service` with `auto-start? #f`. It discovers `SWAYSOCK` dynamically and runs lock/dpms/suspend timeouts. The lock action is `random-wallpaper-lock`, a `program-file` Guile script that picks a random image per output from `~/images/wallpapers/4k`.
 - **pipewire / wireplumber / pipewire-pulse**: three Shepherd services started manually (this config does not use a desktop service that bundles them).
-- **mcron jobs**: rotate the wallpaper every 15 min and download fresh 4K wallpapers from Reddit every 12 h.
+- **mcron jobs**: rotate the wallpaper every 15 min (`random-wallpaper-job`) and download fresh 4K wallpapers from the Wallhaven API every hour (`wallpaper-downloader-job`, all CLI flags passed from `home-config.scm`).
 - **gpg-agent** with SSH support and `pinentry-gnome3`; **openssh** host config; **bash** service holds all aliases (`warp-on/off/status`, `steam`, the `*-update` aliases) plus `bashrc` snippets for direnv, gpg-agent and Claude Code.
 - **governor-claude-plugin**: a `home-activation-service-type` service that runs `scripts/governor-setup.py` on every reconfigure to register the Governor plugin in `~/.claude/settings.json`, pointing `extraKnownMarketplaces` at the store path of the `governor` package. It merges the JSON idempotently, so a user-edited `settings.json` survives. This is the pattern to copy when something needs *mutable* state in `$HOME` that a read-only store symlink cannot provide.
 
@@ -57,4 +59,4 @@ When editing a Shepherd service, remember the gexp/staging split: `#$(file-appen
 
 - This file is read on a system where `git` lives in the user profile; it may not be on `PATH` in every non-login shell — invoke via full path or a login shell if a bare `git` fails.
 - `.gitignore` excludes `*.db` (zathura's SQLite progress DB), Emacs lock/autosave junk (`*#*#`) and Rust build output (`target/`, `src/rust_out`).
-- `scripts/` holds helper code that is *not* a dotfile: `governor-setup.py` (run by the activation service above) and `wallpapers-downloader/`, a Rust crate with its own `manifest.scm` + `.envrc` — enter it and direnv drops you into `guix shell`.
+- `scripts/` holds helper code that is *not* a dotfile: `governor-setup.py` (run by the activation service above) and `wallpaper-downloader/`, a Python package with its own `manifest.scm` + `.envrc` (direnv drops you into `guix shell`; `python3 -m pytest` for tests).

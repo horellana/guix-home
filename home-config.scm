@@ -71,10 +71,17 @@
  (nongnu packages mozilla)
  (nongnu packages chrome)
 
- (my-scripts download-wallpapers)
  (my-packages claude-code)
  (my-packages governor)
  (my-scripts set-wallpaper)
+
+ (guix packages)
+ (guix build-system pyproject)
+ ((guix licenses) #:prefix license:)
+ (gnu packages check)
+ (gnu packages python-web)
+ (gnu packages python-build)
+
  (gnu services mcron)
  (gnu home services mcron))
 
@@ -89,7 +96,6 @@
    emacs-almost-mono-themes
    emacs-tao-theme
    emacs-ef-themes
-   emacs-which-key
    emacs-vertico
    emacs-orderless
    emacs-marginalia
@@ -171,8 +177,7 @@
    zathura
    zathura-pdf-mupdf
    unzip
-   random-wallpaper
-   download-wallpapers))
+   random-wallpaper))
 
 (define my-wm-packages
   (list
@@ -236,6 +241,29 @@
 		   "(defvar guix-plantuml-jar-path \"" 
 		   (file-append plantuml "/share/java/plantuml.jar") 
 		   "\")\n"))
+
+;; Descargador de wallpapers: la fuente vive en este mismo repo, así que
+;; `local-file' evita mantener una copia sincronizada en ~/guix-packages.
+;; pyproject-build-system envuelve bin/wallpaper-downloader con GUIX_PYTHONPATH,
+;; de modo que arrastra su propio `requests' sin depender del profile.
+(define wallpaper-downloader
+  (package
+    (name "wallpaper-downloader")
+    (version "0.1.0")
+    (source (local-file "scripts/wallpaper-downloader" #:recursive? #t
+                        #:select? (lambda (file stat)
+                                    (not (member (basename file)
+                                                 '("test_output" ".direnv"
+                                                   ".pytest_cache" ".ruff_cache"
+                                                   "__pycache__"))))))
+    (build-system pyproject-build-system)
+    (propagated-inputs (list python-requests))
+    (native-inputs (list python-setuptools python-wheel python-pytest))
+    (home-page "https://wallhaven.cc")
+    (synopsis "Descarga wallpapers 4K desde la API de Wallhaven")
+    (description "Cliente de línea de comandos que descarga wallpapers desde la
+API de Wallhaven a un directorio local, omitiendo los que ya existen.")
+    (license license:gpl3+)))
 
 (define random-wallpaper-lock
   (program-file
@@ -421,11 +449,14 @@
 		#~(job
 		   '(next-hour)
 		   (string-append
-		    "export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt; "
-		    "export SSL_CERT_DIR=/etc/ssl/certs; "
-		    #$download-wallpapers-script
-		    " 2>&1")
-		   "reddit-wallpaper-job")))))
+		    ;; el script no crea el directorio destino
+		    "mkdir -p " #$(string-append (getenv "HOME") "/images/wallpapers/4k")
+		    " && "
+		    #$(file-append wallpaper-downloader "/bin/wallpaper-downloader")
+		    ;; el script concatena output-path + nombre: la barra final importa
+		    " --output-path " #$(string-append (getenv "HOME")
+						       "/images/wallpapers/4k/"))
+		   "wallpaper-downloader-job")))))
 
     (service home-bash-service-type
 	     (home-bash-configuration

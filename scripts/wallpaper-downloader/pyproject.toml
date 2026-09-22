@@ -1,8 +1,19 @@
 [project]
 name = "wallpaper-downloader"
 version = "0.1.0"
-description = "Descarga wallpapers 4K de Reddit a ~/images/wallpapers/4k"
+description = "Descarga wallpapers 4K desde la API de Wallhaven"
 requires-python = ">=3.12"
+dependencies = ["requests"]
+
+[project.scripts]
+wallpaper-downloader = "wallpaper_downloader.main:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["wallpaper_downloader"]
 
 [tool.ruff]
 line-length = 100
