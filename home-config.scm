@@ -67,12 +67,16 @@
  (gnu packages glib)
  (gnu packages freedesktop)
  (gnu packages emulators)
+ (gnu packages java)
  
  (nongnu packages mozilla)
  (nongnu packages chrome)
+ (nongnu packages gradle)
 
  (my-packages claude-code)
  (my-packages governor)
+ (my-packages kotlin-lsp)
+ (my-packages kotlin-ts-mode)
  (my-scripts set-wallpaper)
 
  (guix packages)
@@ -113,6 +117,7 @@
    emacs-yasnippet
    emacs-yasnippet-snippets
    emacs-plantuml-mode
+   emacs-kotlin-ts-mode
    emacs-jsdoc
    emacs-evil
    emacs-evil-smartparens
@@ -137,7 +142,10 @@
    tree-sitter-typescript
    tree-sitter-json
    tree-sitter-bash
-   tree-sitter-rust))
+   tree-sitter-rust
+   ;; master, no el 0.3.8 de Guix: las queries de kotlin-ts-mode no casan
+   ;; con el tag y Emacs desactiva el resaltado de cadenas y constantes.
+   tree-sitter-kotlin-next))
 
 (define my-font-packages
   (list font-awesome
@@ -154,7 +162,13 @@
 	man-pages-posix
 	direnv
 	claude-code
-	git))
+	git
+
+	;; Kotlin: el LSP arranca con su propia JVM, pero openjdk:jdk y gradle
+	;; hacen falta para compilar y para que el servidor importe el proyecto.
+	kotlin-lsp
+	gradle
+	(list openjdk "jdk")))
 
 (define my-utils-packages
   (list

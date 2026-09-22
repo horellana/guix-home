@@ -22,6 +22,10 @@
 ;; is not autoloaded, so register it explicitly here.
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 
+;; kotlin-ts-mode is a third-party package (Emacs has no built-in Kotlin ts
+;; mode) and autoloads only the mode itself, never auto-mode-alist.
+(add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
+
 (use-package envrc
   :config
   (envrc-global-mode))
@@ -204,7 +208,8 @@
 
 (use-package eglot
   :commands (eglot eglot-ensure)
-  :hook (python-mode . eglot-ensure)
+  :hook ((python-mode . eglot-ensure)
+         (kotlin-ts-mode . eglot-ensure))
   :config
   ;; Crates de Rust anidados dentro de un repo más grande (p. ej. este mismo,
   ;; scripts/wallpapers-downloader): project.el usa la raíz git, así que
@@ -224,7 +229,17 @@
   ;; eglot ofrece pylsp y ruff para Python; ruff-server solo hace lint/formato.
   ;; Fijamos pylsp (jedi -> completado) y los diagnósticos de ruff llegan por su
   ;; plugin python-lsp-ruff.
-  (add-to-list 'eglot-server-programs '((python-mode python-ts-mode) . ("pylsp"))))
+  (add-to-list 'eglot-server-programs '((python-mode python-ts-mode) . ("pylsp")))
+  ;; kotlin-lsp es el servidor de JetBrains sobre la plataforma IntelliJ.  Sin
+  ;; --system-path guarda sus índices en /tmp/idea-system<aleatorio>, o sea que
+  ;; reimporta el proyecto Gradle entero en cada arranque de Emacs.
+  (add-to-list 'eglot-server-programs
+               `((kotlin-ts-mode kotlin-mode)
+                 . ("kotlin-lsp" "--stdio"
+                    ,(concat "--system-path="
+                             (expand-file-name
+                              "kotlin-lsp"
+                              (or (getenv "XDG_CACHE_HOME") "~/.cache")))))))
 
 (use-package eldoc-box :after eldoc :bind (("C-c K" . eldoc-box-help-at-point)))
 (use-package yasnippet :config (yas-global-mode 1))
