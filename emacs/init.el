@@ -203,7 +203,14 @@
 (with-eval-after-load 'project
   (defun horellana/project-find-guix-shell (dir)
     (when-let* ((root (locate-dominating-file dir "manifest.scm")))
-      (cons 'transient (expand-file-name root))))
+      (setq root (expand-file-name root))
+      ;; Si ese mismo directorio ya es una raiz VC (p. ej. este propio repo,
+      ;; o gba-emulator-apk), cedemos a project-try-vc: usar 'transient ahi
+      ;; hace que project-find-file recorra TODO el filesystem sin respetar
+      ;; .gitignore (build/, .android/, .gradle/... miles de archivos).
+      (unless (seq-some (lambda (marker) (file-exists-p (expand-file-name marker root)))
+                         '(".git" ".hg" ".bzr" ".svn"))
+        (cons 'transient root))))
   (add-to-list 'project-find-functions #'horellana/project-find-guix-shell))
 
 (use-package eglot
