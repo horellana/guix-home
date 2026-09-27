@@ -196,7 +196,8 @@
    zathura
    zathura-pdf-mupdf
    unzip
-   random-wallpaper))
+   random-wallpaper
+   (list transmission "gui")))
 
 (define my-wm-packages
   (list
