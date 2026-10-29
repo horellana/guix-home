@@ -80,9 +80,13 @@
 
  (my-packages claude-code)
  (my-packages governor)
+ (my-packages openspec)
  (my-packages kotlin-lsp)
  (my-packages kotlin-ts-mode)
+ (my-packages docker-compose)
  (my-scripts set-wallpaper)
+ (gnu packages docker)
+ (gnu packages containers)
 
  (guix packages)
  (guix build-system pyproject)
@@ -167,13 +171,20 @@
 	man-pages-posix
 	direnv
 	claude-code
+	openspec
 	git
 
 	;; Kotlin: el LSP arranca con su propia JVM, pero openjdk:jdk y gradle
 	;; hacen falta para compilar y para que el servidor importe el proyecto.
 	kotlin-lsp
 	gradle
-	(list openjdk "jdk")))
+	(list openjdk "jdk")
+
+	;; Contenedores: el motor es Podman rootless (servicio de sistema en
+	;; /etc/config.scm); el CLI de docker y Compose v2 hablan con su socket
+	;; (ver podman-services más abajo).
+	docker-cli
+	docker-compose-v2))
 
 (define my-utils-packages
   (list
@@ -424,6 +435,51 @@ API de Wallhaven a un directorio local, omitiendo los que ya existen.")
 
     (service home-dbus-service-type)
 
+    ;; Podman rootless con API compatible con Docker en
+    ;; $XDG_RUNTIME_DIR/podman/podman.sock (DOCKER_HOST apunta ahí).
+    ;; podman-healthchecks suple los timers de systemd que Podman usa para
+    ;; correr los healthchecks: sin ellos nunca pasan de "starting" y
+    ;; `docker compose up --wait` se queda esperando.
+    (simple-service 'podman-services
+		    home-shepherd-service-type
+		    (list
+		     (shepherd-service
+		      (documentation "Podman API service (Docker-compatible socket).")
+		      (provision '(podman-api))
+		      (start #~(make-forkexec-constructor
+				(list #$(file-append bash "/bin/bash") "-c"
+				      (string-append
+				       "export PATH=/run/privileged/bin:$PATH; "
+				       "exec " #$(file-append podman "/bin/podman")
+				       " system service --time=0"
+				       " unix://${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock"))
+				#:log-file (string-append (getenv "HOME") "/.local/share/shepherd/podman-api.log")))
+		      (stop #~(make-kill-destructor)))
+
+		     (shepherd-service
+		      (documentation "Run Podman container healthchecks every 5 seconds.")
+		      (provision '(podman-healthchecks))
+		      (requirement '(podman-api))
+		      (start #~(make-forkexec-constructor
+				(list #$(file-append bash "/bin/bash") "-c"
+				      (string-append
+				       "export PATH=/run/privileged/bin:$PATH; "
+				       "p=" #$(file-append podman "/bin/podman") "; "
+				       "while sleep 5; do "
+				       "for c in $($p ps -q --filter health=starting"
+				       " --filter health=healthy --filter health=unhealthy); do "
+				       "$p healthcheck run $c >/dev/null 2>&1 & "
+				       "done; wait; done"))
+				#:log-file (string-append (getenv "HOME") "/.local/share/shepherd/podman-healthchecks.log")))
+		      (stop #~(make-kill-destructor)))))
+
+    ;; Compose v2 como plugin del CLI: `docker compose ...`.
+    (simple-service 'docker-cli-plugins
+		    home-files-service-type
+		    (list `(".docker/cli-plugins/docker-compose"
+			    ,(file-append docker-compose-v2
+					  "/libexec/docker/cli-plugins/docker-compose"))))
+
     (simple-service 'steam-tray-icon
                 home-xdg-data-files-service-type
                 (list (list "icons/hicolor/48x48/apps/steam_tray_mono.png"
@@ -473,6 +529,12 @@ API de Wallhaven a un directorio local, omitiendo los que ya existen.")
 		    "mkdir -p " #$(string-append (getenv "HOME") "/images/wallpapers/4k")
 		    " && "
 		    #$(file-append wallpaper-downloader "/bin/wallpaper-downloader")
+		    " --category GENERAL"
+		    ;; una peticion por combinacion consulta x color (negro y gris oscuro de la paleta de Wallhaven)
+		    " --query id:37 --query id:32" ; etiquetas exactas nature (37) y space (32) de Wallhaven; q=texto es difusa y colaba capturas de juegos
+		    " --color 000000 --color 424153"
+			    ;; los mejores del ultimo año, 3 paginas por combinacion; lo ya descargado se omite
+			    " --sorting toplist --top-range 1y --pages 3"
 		    ;; el script concatena output-path + nombre: la barra final importa
 		    " --output-path " #$(string-append (getenv "HOME")
 						       "/images/wallpapers/4k/"))
