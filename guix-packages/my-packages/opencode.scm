@@ -26,7 +26,7 @@
 (define-public opencode
   (package
     (name "opencode")
-    (version "1.18.18")
+    (version "1.19.5")
     (source
      (origin
        (method url-fetch)
@@ -34,7 +34,7 @@
              "https://registry.npmjs.org/opencode-linux-x64/-/"
              "opencode-linux-x64-" version ".tgz"))
        (sha256
-        (base32 "0q4ybz802b47w4sc4lkb9y9xxc6xk65wnag7cf40rfnibp1qzj24"))))
+        (base32 "1q6m3p0153zwb9a86xg5xasy4g5hb3i1pzr2vfycpipc7lqgqz1d"))))
     (build-system copy-build-system)
     (arguments
      `(#:install-plan '(("bin/opencode" "libexec/opencode"))

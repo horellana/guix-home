@@ -23,7 +23,7 @@
 (define-public governor
   (package
     (name "governor")
-    (version "0.2.3")
+    (version "0.2.5")
     (source
      (origin
        (method git-fetch)
@@ -32,7 +32,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0rw091ijxwa7s3hii1h9wrfp8r7h5pg2aqyydmaby0gdlavazcpm"))))
+        (base32 "02w6hkqp88ngv1y9s0myhkraiwb4lzr9pk8hh0di5qn2vdp50sng"))))
     (build-system copy-build-system)
     (arguments
      `(#:install-plan '(("." "share/governor"))))
