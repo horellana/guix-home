@@ -603,7 +603,14 @@ API de Wallhaven a un directorio local, omitiendo los que ya existen.")
 		    #~(system*
 		       #$(file-append python "/bin/python3")
 		       #$(local-file "scripts/governor-setup.py")
-		       #$(file-append governor "/share/governor")))
+		       #$(file-append governor "/share/governor")
+		       ;; statusLine.command: Governor + cuenta atrás de los resets
+		       ;; de 5 h y 7 días.
+		       (string-append
+			"\"" #$(file-append python "/bin/python3") "\" \""
+			#$(local-file "scripts/claude-statusline.py") "\" \""
+			#$(file-append governor "/share/governor/bin/governor-statusline")
+			"\"")))
 
     (simple-service 'wayland-env-vars-service
 		    home-environment-variables-service-type

@@ -5,7 +5,9 @@ Lo invoca el servicio de activación `governor-claude-plugin` de home-config.scm
 en cada `guix home reconfigure`.  Idempotente: solo toca las claves de Governor
 y respeta el resto de la configuración del usuario (incl. un statusLine propio).
 
-Uso: governor-setup.py <ruta-del-marketplace-en-el-store>
+Uso: governor-setup.py <ruta-del-marketplace-en-el-store> [<comando-statusline>]
+
+Sin <comando-statusline> se usa la statusline de Governor tal cual.
 """
 
 import json
@@ -14,6 +16,7 @@ import sys
 from pathlib import Path
 
 market = sys.argv[1]
+statusline_cmd = sys.argv[2] if len(sys.argv) > 2 else None
 
 home = Path(os.environ["HOME"])
 claude_dir = home / ".claude"
@@ -46,12 +49,13 @@ if not isinstance(markets, dict):
 markets["governor"] = {"source": {"source": "directory", "path": market}}
 settings["extraKnownMarketplaces"] = markets
 
-# Statusline: la pongo si no hay ninguna, y refresco la ruta del store si la
-# que hay ya es la de Governor.
-statusline = f'"{market}/bin/governor-statusline"'
+# Statusline: la pongo si no hay ninguna, y refresco las rutas del store si la
+# que hay ya es la nuestra (Governor sola o envuelta por claude-statusline.py).
+statusline = statusline_cmd or f'"{market}/bin/governor-statusline"'
 current = settings.get("statusLine")
-if not isinstance(current, dict) or "governor-statusline" in str(
-    current.get("command", "")
+current_cmd = str(current.get("command", "")) if isinstance(current, dict) else ""
+if not isinstance(current, dict) or any(
+    mark in current_cmd for mark in ("governor-statusline", "claude-statusline")
 ):
     settings["statusLine"] = {"type": "command", "command": statusline}
 
