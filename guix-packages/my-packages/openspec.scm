@@ -12,7 +12,7 @@
 ;;;
 ;;; Para actualizar de versión:
 ;;;   1. cambia (version ...).
-;;;   2. pon un hash falso (p.ej. (base32 "0000000000000000000000000000000000000000000000000000"))
+;;;   2. pon un hash falso (p.ej. (base32 "1p5f64igbd5qg0j1jjbkmp6j4a6452pclb7gpb3jvdg3cyhcgcxp"))
 ;;;      y ejecuta `guix build -f guix-packages/my-packages/openspec.scm`; el
 ;;;      error de "hash mismatch" imprime el base32 real.
 ;;;   3. pega ese base32 en (sha256 (base32 ...)).
@@ -66,14 +66,14 @@ con sus dependencias de producción y deja el árbol node_modules como salida."
 (define-public openspec
   (package
     (name "openspec")
-    (version "1.15.0")
+    (version "2.1.0")
     (source
      (origin
        (method npm-install-fetch)
        (uri (string-append "@fission-ai/openspec@" version))
        (file-name (string-append name "-" version "-node-modules"))
        (sha256
-        (base32 "0vhdmiy872bnvq4wl181sbcqa4gwaymb28fm06wm05r4n0hdscjp"))))
+        (base32 "1p5f64igbd5qg0j1jjbkmp6j4a6452pclb7gpb3jvdg3cyhcgcxp"))))
     (build-system copy-build-system)
     (arguments
      (list

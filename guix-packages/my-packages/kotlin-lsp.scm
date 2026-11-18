@@ -52,7 +52,7 @@
 (define-public kotlin-lsp
   (package
     (name "kotlin-lsp")
-    (version "263.7084.0")
+    (version "271.2085.0")
     (source
      (origin
        (method url-fetch)
@@ -60,7 +60,7 @@
              "https://download.jetbrains.com/language-server/kotlin-server/"
              version "/kotlin-server-" version ".tar.gz"))
        (sha256
-        (base32 "1pqivp6y992r4yr1a0v0k7jf7jvdkslqx9r7a953mdvsw40ln35f"))))
+        (base32 "025fg3bxn2p3qxc1i5hhz503vl870d3mgaizlfg78hbz0acyg673"))))
     (build-system copy-build-system)
     (arguments
      `(#:install-plan '(("." "share/kotlin-lsp"))
