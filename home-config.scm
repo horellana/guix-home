@@ -80,6 +80,7 @@
 
  (my-packages claude-code)
  (my-packages governor)
+ (my-packages claude-tmux-integrations)
  (my-packages openspec)
  (my-packages kotlin-lsp)
  (my-packages kotlin-ts-mode)
@@ -611,6 +612,18 @@ API de Wallhaven a un directorio local, omitiendo los que ya existen.")
 			#$(local-file "scripts/claude-statusline.py") "\" \""
 			#$(file-append governor "/share/governor/bin/governor-statusline")
 			"\"")))
+
+    ;; Registra el marketplace claude-tmux-integrations (plugin
+    ;; tmux-window-title) apuntando al store.  Mismo patrón que Governor.
+    (simple-service 'claude-tmux-plugin
+		    home-activation-service-type
+		    #~(system*
+		       #$(file-append python "/bin/python3")
+		       #$(local-file "scripts/claude-marketplace-setup.py")
+		       "claude-tmux-integrations"
+		       #$(file-append claude-tmux-integrations
+				      "/share/claude-tmux-integrations")
+		       "tmux-window-title"))
 
     (simple-service 'wayland-env-vars-service
 		    home-environment-variables-service-type
